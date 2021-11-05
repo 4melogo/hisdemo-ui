@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '若依管理系统',
+      title: '合理用药智慧监管云平台',
       logo: logoImg
     }
   }
