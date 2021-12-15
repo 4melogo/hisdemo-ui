@@ -216,7 +216,7 @@
 </template>
 
 <script>
-import { listInfo, getInfo, delInfo, addInfo, updateInfo, fileUpload } from "@/api/drug/info";
+import { listInfo, getInfo, delInfo, addInfo, updateInfo, fileUpload } from "@/api/datamatching/info";
 
 export default {
   name: "Info",
