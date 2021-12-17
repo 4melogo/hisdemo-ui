@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="药品通用名" prop="drugName">
         <el-input
           v-model="queryParams.drugName"
@@ -10,65 +10,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="年龄组类型" prop="ageType">-->
-<!--        <el-select v-model="queryParams.ageType" placeholder="请选择年龄组类型" clearable size="small">-->
-<!--          <el-option label="请选择字典生成" value="" />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="年龄组" prop="ageGroup">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.ageGroup"-->
-<!--          placeholder="请输入年龄组"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-      <el-form-item label="开始时间" prop="ageMin">
-        <el-input
-          v-model="queryParams.ageMin"
-          placeholder="请输入开始时间"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="是否区分孕周" prop="gestationalWeek">
+        <el-select v-model="queryParams.gestationalWeek" placeholder="请选择是否区分孕周" clearable size="small">
+          <el-option
+            v-for="dict in gestationalWeekOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="结束时间" prop="ageMax">
-        <el-input
-          v-model="queryParams.ageMax"
-          placeholder="请输入结束时间"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-<!--      <el-form-item label="时间单位" prop="ageUnit">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.ageUnit"-->
-<!--          placeholder="请输入时间单位"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="询证来源" prop="source">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.source"-->
-<!--          placeholder="请输入询证来源"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="分数" prop="score">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.score"-->
-<!--          placeholder="请输入分数"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
 <!--      <el-form-item label="创建人" prop="createUser">-->
 <!--        <el-input-->
 <!--          v-model="queryParams.createUser"-->
@@ -82,6 +33,42 @@
 <!--        <el-input-->
 <!--          v-model="queryParams.updateUser"-->
 <!--          placeholder="请输入更新人"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+      <el-form-item label="妊娠开始" prop="pregnancyMin">
+        <el-input
+          v-model="queryParams.pregnancyMin"
+          placeholder="请输入妊娠开始"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="妊娠结束" prop="pregnancyEnd">
+        <el-input
+          v-model="queryParams.pregnancyEnd"
+          placeholder="请输入妊娠结束"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+<!--      <el-form-item label="询证来源" prop="source">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.source"-->
+<!--          placeholder="请输入询证来源"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="分数" prop="score">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.score"-->
+<!--          placeholder="请输入分数"-->
 <!--          clearable-->
 <!--          size="small"-->
 <!--          @keyup.enter.native="handleQuery"-->
@@ -101,7 +88,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['rud:child:add']"
+          v-hasPermi="['rud:rulePregnancy:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -112,7 +99,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['rud:child:edit']"
+          v-hasPermi="['rud:rulePregnancy:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -123,7 +110,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['rud:child:remove']"
+          v-hasPermi="['rud:rulePregnancy:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -133,26 +120,29 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['rud:child:export']"
+          v-hasPermi="['rud:rulePregnancy:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="childList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="rulePregnancyList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="药品通用名" align="center" prop="drugName" />
-      <el-table-column label="年龄组类型" align="center" prop="ageType" />
-      <el-table-column label="年龄组" align="center" prop="ageGroup" />
-      <el-table-column label="开始时间" align="center" prop="ageMin" />
-      <el-table-column label="结束时间" align="center" prop="ageMax" />
-      <el-table-column label="时间单位" align="center" prop="ageUnit" />
-      <el-table-column label="询证" align="center" prop="evidence" />
-      <el-table-column label="询证来源" align="center" prop="source" />
-      <el-table-column label="分数" align="center" prop="score" />
+      <el-table-column label="是否区分孕周" align="center" prop="gestationalWeek">
+        <template slot-scope="scope">
+          <dict-tag :options="gestationalWeekOptions" :value="scope.row.gestationalWeek"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="妊娠程度 -2 没填 -1备孕 0 未孕" align="center" prop="pregnancy" />
       <el-table-column label="创建人" align="center" prop="createUser" />
       <el-table-column label="更新人" align="center" prop="updateUser" />
+      <el-table-column label="询证" align="center" prop="evidence" />
+      <el-table-column label="妊娠开始" align="center" prop="pregnancyMin" />
+      <el-table-column label="妊娠结束" align="center" prop="pregnancyEnd" />
+      <el-table-column label="询证来源" align="center" prop="source" />
+      <el-table-column label="分数" align="center" prop="score" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -160,14 +150,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['rud:child:edit']"
+            v-hasPermi="['rud:rulePregnancy:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['rud:child:remove']"
+            v-hasPermi="['rud:rulePregnancy:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -181,43 +171,45 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改儿童用药规则对话框 -->
+    <!-- 添加或修改妊娠用药禁忌对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="药品通用名" prop="drugName">
           <el-input v-model="form.drugName" placeholder="请输入药品通用名" />
         </el-form-item>
-        <el-form-item label="年龄组类型" prop="ageType">
-          <el-select v-model="form.ageType" placeholder="请选择年龄组类型">
-            <el-option label="儿童" value="儿童" />
+        <el-form-item label="是否区分孕周" prop="gestationalWeek">
+          <el-select v-model="form.gestationalWeek" placeholder="请选择是否区分孕周">
+            <el-option
+              v-for="dict in gestationalWeekOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="年龄组" prop="ageGroup">
-          <el-input v-model="form.ageGroup" placeholder="请输入年龄组" />
-        </el-form-item>
-        <el-form-item label="开始时间" prop="ageMin">
-          <el-input v-model="form.ageMin" placeholder="请输入开始时间" />
-        </el-form-item>
-        <el-form-item label="结束时间" prop="ageMax">
-          <el-input v-model="form.ageMax" placeholder="请输入结束时间" />
-        </el-form-item>
-        <el-form-item label="时间单位" prop="ageUnit">
-          <el-input v-model="form.ageUnit" placeholder="请输入时间单位" />
-        </el-form-item>
-        <el-form-item label="询证" prop="evidence">
-          <el-input v-model="form.evidence" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="询证来源" prop="source">
-          <el-input v-model="form.source" placeholder="请输入询证来源" />
-        </el-form-item>
-        <el-form-item label="分数" prop="score">
-          <el-input v-model="form.score" placeholder="请输入分数" />
+        <el-form-item label="妊娠程度 -2 没填 -1备孕 0 未孕" prop="pregnancy">
+          <el-input v-model="form.pregnancy" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="创建人" prop="createUser">
           <el-input v-model="form.createUser" placeholder="请输入创建人" />
         </el-form-item>
         <el-form-item label="更新人" prop="updateUser">
           <el-input v-model="form.updateUser" placeholder="请输入更新人" />
+        </el-form-item>
+        <el-form-item label="询证" prop="evidence">
+          <el-input v-model="form.evidence" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="妊娠开始" prop="pregnancyMin">
+          <el-input v-model="form.pregnancyMin" placeholder="请输入妊娠开始" />
+        </el-form-item>
+        <el-form-item label="妊娠结束" prop="pregnancyEnd">
+          <el-input v-model="form.pregnancyEnd" placeholder="请输入妊娠结束" />
+        </el-form-item>
+        <el-form-item label="询证来源" prop="source">
+          <el-input v-model="form.source" placeholder="请输入询证来源" />
+        </el-form-item>
+        <el-form-item label="分数" prop="score">
+          <el-input v-model="form.score" placeholder="请输入分数" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -229,10 +221,10 @@
 </template>
 
 <script>
-import { listChild, getChild, delChild, addChild, updateChild } from "@/api/rud/rule/rulechild/child";
+import { listRulePregnancy, getRulePregnancy, delRulePregnancy, addRulePregnancy, updateRulePregnancy } from "@/api/rud/rule/rulepregancy/rulePregnancy";
 
 export default {
-  name: "Child",
+  name: "RulePregnancy",
   data() {
     return {
       // 遮罩层
@@ -247,27 +239,68 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 儿童用药规则表格数据
-      childList: [],
+      // 妊娠用药禁忌表格数据
+      rulePregnancyList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否区分孕周字典
+      gestationalWeekOptions: [
+        {
+          createBy: "admin",
+          createTime: "2021-10-21 14:59:15",
+          cssClass: "",
+          default: true,
+          dictCode: 6,
+          dictLabel: "是",
+          dictSort: 1,
+          dictType: "sys_normal_disable",
+          dictValue: "1",
+          isDefault: "Y",
+          listClass: "primary",
+          params: {},
+          remark: "正常状态",
+          searchValue: null,
+          status: "0",
+          updateBy: null,
+          updateTime: null,
+        },
+        {
+          createBy: "admin",
+          createTime: "2021-10-21 14:59:15",
+          cssClass: "",
+          default: true,
+          dictCode: 6,
+          dictLabel: "否",
+          dictSort: 1,
+          dictType: "sys_normal_disable",
+          dictValue: "2",
+          isDefault: "Y",
+          listClass: "primary",
+          params: {},
+          remark: "正常状态",
+          searchValue: null,
+          status: "0",
+          updateBy: null,
+          updateTime: null,
+        }
+      ],
+
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         drugName: null,
-        ageType: null,
-        ageGroup: null,
-        ageMin: null,
-        ageMax: null,
-        ageUnit: null,
-        evidence: null,
-        source: null,
-        score: null,
+        gestationalWeek: null,
+        pregnancy: null,
         createUser: null,
         updateUser: null,
+        evidence: null,
+        pregnancyMin: null,
+        pregnancyEnd: null,
+        source: null,
+        score: null
       },
       // 表单参数
       form: {},
@@ -276,11 +309,11 @@ export default {
         drugName: [
           { required: true, message: "药品通用名不能为空", trigger: "blur" }
         ],
-        ageType: [
-          { required: true, message: "年龄组类型不能为空", trigger: "change" }
+        gestationalWeek: [
+          { required: true, message: "是否区分孕周不能为空", trigger: "change" }
         ],
-        ageGroup: [
-          { required: true, message: "年龄组不能为空", trigger: "blur" }
+        pregnancy: [
+          { required: true, message: "妊娠程度 -2 没填 -1备孕 0 未孕不能为空", trigger: "blur" }
         ],
         createUser: [
           { required: true, message: "创建人不能为空", trigger: "blur" }
@@ -293,19 +326,37 @@ export default {
         ],
         updateTime: [
           { required: true, message: "更新时间不能为空", trigger: "blur" }
+        ],
+        evidence: [
+          { required: true, message: "询证不能为空", trigger: "blur" }
+        ],
+        pregnancyMin: [
+          { required: true, message: "妊娠开始不能为空", trigger: "blur" }
+        ],
+        pregnancyEnd: [
+          { required: true, message: "妊娠结束不能为空", trigger: "blur" }
+        ],
+        source: [
+          { required: true, message: "询证来源不能为空", trigger: "blur" }
+        ],
+        score: [
+          { required: true, message: "分数不能为空", trigger: "blur" }
         ]
       }
     };
   },
   created() {
     this.getList();
+    // this.getDicts("sys_yes_no").then(response => {
+    //   this.gestationalWeekOptions = response.data;
+    // });
   },
   methods: {
-    /** 查询儿童用药规则列表 */
+    /** 查询妊娠用药禁忌列表 */
     getList() {
       this.loading = true;
-      listChild(this.queryParams).then(response => {
-        this.childList = response.rows;
+      listRulePregnancy(this.queryParams).then(response => {
+        this.rulePregnancyList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -320,18 +371,17 @@ export default {
       this.form = {
         id: null,
         drugName: null,
-        ageType: null,
-        ageGroup: null,
-        ageMin: null,
-        ageMax: null,
-        ageUnit: null,
-        evidence: null,
-        source: null,
-        score: null,
+        gestationalWeek: null,
+        pregnancy: null,
         createUser: null,
         createTime: null,
         updateUser: null,
-        updateTime: null
+        updateTime: null,
+        evidence: null,
+        pregnancyMin: null,
+        pregnancyEnd: null,
+        source: null,
+        score: null
       };
       this.resetForm("form");
     },
@@ -355,16 +405,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加儿童用药规则";
+      this.title = "添加妊娠用药禁忌";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getChild(id).then(response => {
+      getRulePregnancy(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改儿童用药规则";
+        this.title = "修改妊娠用药禁忌";
       });
     },
     /** 提交按钮 */
@@ -372,13 +422,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateChild(this.form).then(response => {
+            updateRulePregnancy(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addChild(this.form).then(response => {
+            addRulePregnancy(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -390,12 +440,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除儿童用药规则编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除妊娠用药禁忌编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delChild(ids);
+          return delRulePregnancy(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -403,9 +453,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('lkai-rud/child/export', {
+      this.download('lkai-rud/rulePregnancy/export', {
         ...this.queryParams
-      }, `rud_child.xlsx`)
+      }, `rud_rulePregnancy.xlsx`)
     }
   }
 };

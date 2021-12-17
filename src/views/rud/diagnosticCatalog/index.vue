@@ -1,74 +1,24 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px">
-      <el-form-item label="药品通用名" prop="drugName">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+<!--      <el-form-item label="附加编码,保留字段，已经合并至code字段" prop="icd10CodeAdd">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.icd10CodeAdd"-->
+<!--          placeholder="请输入附加编码,保留字段，已经合并至code字段"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+      <el-form-item label="名称" prop="icd10Name">
         <el-input
-          v-model="queryParams.drugName"
-          placeholder="请输入药品通用名"
+          v-model="queryParams.icd10Name"
+          placeholder="请输入名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="年龄组类型" prop="ageType">-->
-<!--        <el-select v-model="queryParams.ageType" placeholder="请选择年龄组类型" clearable size="small">-->
-<!--          <el-option label="请选择字典生成" value="" />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="年龄组" prop="ageGroup">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.ageGroup"-->
-<!--          placeholder="请输入年龄组"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-      <el-form-item label="开始时间" prop="ageMin">
-        <el-input
-          v-model="queryParams.ageMin"
-          placeholder="请输入开始时间"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="结束时间" prop="ageMax">
-        <el-input
-          v-model="queryParams.ageMax"
-          placeholder="请输入结束时间"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-<!--      <el-form-item label="时间单位" prop="ageUnit">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.ageUnit"-->
-<!--          placeholder="请输入时间单位"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="询证来源" prop="source">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.source"-->
-<!--          placeholder="请输入询证来源"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="分数" prop="score">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.score"-->
-<!--          placeholder="请输入分数"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
 <!--      <el-form-item label="创建人" prop="createUser">-->
 <!--        <el-input-->
 <!--          v-model="queryParams.createUser"-->
@@ -87,6 +37,15 @@
 <!--          @keyup.enter.native="handleQuery"-->
 <!--        />-->
 <!--      </el-form-item>-->
+      <el-form-item label="诊断标签" prop="diagnosisLabel">
+        <el-input
+          v-model="queryParams.diagnosisLabel"
+          placeholder="请输入诊断标签"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -101,7 +60,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['rud:child:add']"
+          v-hasPermi="['rud:diagnosticCatalog:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -112,7 +71,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['rud:child:edit']"
+          v-hasPermi="['rud:diagnosticCatalog:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -123,7 +82,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['rud:child:remove']"
+          v-hasPermi="['rud:diagnosticCatalog:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -133,26 +92,20 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['rud:child:export']"
+          v-hasPermi="['rud:diagnosticCatalog:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="childList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="diagnosticCatalogList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="药品通用名" align="center" prop="drugName" />
-      <el-table-column label="年龄组类型" align="center" prop="ageType" />
-      <el-table-column label="年龄组" align="center" prop="ageGroup" />
-      <el-table-column label="开始时间" align="center" prop="ageMin" />
-      <el-table-column label="结束时间" align="center" prop="ageMax" />
-      <el-table-column label="时间单位" align="center" prop="ageUnit" />
-      <el-table-column label="询证" align="center" prop="evidence" />
-      <el-table-column label="询证来源" align="center" prop="source" />
-      <el-table-column label="分数" align="center" prop="score" />
+<!--      <el-table-column label="附加编码,保留字段，已经合并至code字段" align="center" prop="icd10CodeAdd" />-->
+      <el-table-column label="名称" align="center" prop="icd10Name" />
       <el-table-column label="创建人" align="center" prop="createUser" />
       <el-table-column label="更新人" align="center" prop="updateUser" />
+      <el-table-column label="诊断标签" align="center" prop="diagnosisLabel" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -160,14 +113,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['rud:child:edit']"
+            v-hasPermi="['rud:diagnosticCatalog:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['rud:child:remove']"
+            v-hasPermi="['rud:diagnosticCatalog:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -181,43 +134,30 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改儿童用药规则对话框 -->
+    <!-- 添加或修改标准ICD10诊断目录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="药品通用名" prop="drugName">
-          <el-input v-model="form.drugName" placeholder="请输入药品通用名" />
-        </el-form-item>
-        <el-form-item label="年龄组类型" prop="ageType">
-          <el-select v-model="form.ageType" placeholder="请选择年龄组类型">
-            <el-option label="儿童" value="儿童" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="年龄组" prop="ageGroup">
-          <el-input v-model="form.ageGroup" placeholder="请输入年龄组" />
-        </el-form-item>
-        <el-form-item label="开始时间" prop="ageMin">
-          <el-input v-model="form.ageMin" placeholder="请输入开始时间" />
-        </el-form-item>
-        <el-form-item label="结束时间" prop="ageMax">
-          <el-input v-model="form.ageMax" placeholder="请输入结束时间" />
-        </el-form-item>
-        <el-form-item label="时间单位" prop="ageUnit">
-          <el-input v-model="form.ageUnit" placeholder="请输入时间单位" />
-        </el-form-item>
-        <el-form-item label="询证" prop="evidence">
-          <el-input v-model="form.evidence" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="询证来源" prop="source">
-          <el-input v-model="form.source" placeholder="请输入询证来源" />
-        </el-form-item>
-        <el-form-item label="分数" prop="score">
-          <el-input v-model="form.score" placeholder="请输入分数" />
+<!--        <el-form-item label="附加编码,保留字段，已经合并至code字段" prop="icd10CodeAdd">-->
+<!--          <el-input v-model="form.icd10CodeAdd" placeholder="请输入附加编码,保留字段，已经合并至code字段" />-->
+<!--        </el-form-item>-->
+        <el-form-item label="名称" prop="icd10Name">
+          <el-input v-model="form.icd10Name" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="创建人" prop="createUser">
           <el-input v-model="form.createUser" placeholder="请输入创建人" />
         </el-form-item>
         <el-form-item label="更新人" prop="updateUser">
           <el-input v-model="form.updateUser" placeholder="请输入更新人" />
+        </el-form-item>
+        <el-form-item label="诊断标签" prop="diagnosisLabel">
+          <el-select v-model="form.diagnosisLabel" placeholder="请输入诊断标签" >
+            <el-option
+              v-for="dict in diagnosisLabelList"
+              :key="dict.id"
+              :label="dict.diagnosisLabel"
+              :value="dict.diagnosisLabel"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -229,12 +169,13 @@
 </template>
 
 <script>
-import { listChild, getChild, delChild, addChild, updateChild } from "@/api/rud/rule/rulechild/child";
+import { listDiagnosticCatalog, getDiagnosticCatalog, delDiagnosticCatalog, addDiagnosticCatalog, updateDiagnosticCatalog ,getLabelList} from "@/api/rud/diagnosticCatelog/diagnosticCatalog";
 
 export default {
-  name: "Child",
+  name: "DiagnosticCatalog",
   data() {
     return {
+      diagnosisLabelList : [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -247,8 +188,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 儿童用药规则表格数据
-      childList: [],
+      // 标准ICD10诊断目录表格数据
+      diagnosticCatalogList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -257,31 +198,16 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        drugName: null,
-        ageType: null,
-        ageGroup: null,
-        ageMin: null,
-        ageMax: null,
-        ageUnit: null,
-        evidence: null,
-        source: null,
-        score: null,
+        icd10CodeAdd: null,
+        icd10Name: null,
         createUser: null,
         updateUser: null,
+        diagnosisLabel: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        drugName: [
-          { required: true, message: "药品通用名不能为空", trigger: "blur" }
-        ],
-        ageType: [
-          { required: true, message: "年龄组类型不能为空", trigger: "change" }
-        ],
-        ageGroup: [
-          { required: true, message: "年龄组不能为空", trigger: "blur" }
-        ],
         createUser: [
           { required: true, message: "创建人不能为空", trigger: "blur" }
         ],
@@ -293,19 +219,28 @@ export default {
         ],
         updateTime: [
           { required: true, message: "更新时间不能为空", trigger: "blur" }
+        ],
+        diagnosisLabel: [
+          { required: true, message: "诊断标签不能为空", trigger: "blur" }
         ]
       }
     };
   },
   created() {
     this.getList();
+    this.getLabels();
   },
   methods: {
-    /** 查询儿童用药规则列表 */
+    getLabels() {
+      getLabelList().then(response => {
+        this.diagnosisLabelList = response.data;
+      });
+    },
+    /** 查询标准ICD10诊断目录列表 */
     getList() {
       this.loading = true;
-      listChild(this.queryParams).then(response => {
-        this.childList = response.rows;
+      listDiagnosticCatalog(this.queryParams).then(response => {
+        this.diagnosticCatalogList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -319,19 +254,14 @@ export default {
     reset() {
       this.form = {
         id: null,
-        drugName: null,
-        ageType: null,
-        ageGroup: null,
-        ageMin: null,
-        ageMax: null,
-        ageUnit: null,
-        evidence: null,
-        source: null,
-        score: null,
+        icd10Code: null,
+        icd10CodeAdd: null,
+        icd10Name: null,
         createUser: null,
         createTime: null,
         updateUser: null,
-        updateTime: null
+        updateTime: null,
+        diagnosisLabel: null
       };
       this.resetForm("form");
     },
@@ -355,16 +285,17 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加儿童用药规则";
+      this.title = "添加标准ICD10诊断目录";
+
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getChild(id).then(response => {
+      getDiagnosticCatalog(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改儿童用药规则";
+        this.title = "修改标准ICD10诊断目录";
       });
     },
     /** 提交按钮 */
@@ -372,13 +303,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateChild(this.form).then(response => {
+            updateDiagnosticCatalog(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addChild(this.form).then(response => {
+            addDiagnosticCatalog(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -390,12 +321,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除儿童用药规则编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除标准ICD10诊断目录编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delChild(ids);
+          return delDiagnosticCatalog(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -403,9 +334,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('lkai-rud/child/export', {
+      this.download('lkai-rud/diagnosticCatalog/export', {
         ...this.queryParams
-      }, `rud_child.xlsx`)
+      }, `rud_diagnosticCatalog.xlsx`)
     }
   }
 };
