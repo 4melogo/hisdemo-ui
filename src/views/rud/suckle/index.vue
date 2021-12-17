@@ -10,25 +10,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否区分疾病严重" prop="isSerious">
-        <el-select v-model="queryParams.isSerious" placeholder="请选择是否区分疾病严重" clearable size="small">
-          <el-option
-            v-for="dict in isSeriousOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-<!--      <el-form-item label="肝损描述" prop="liver">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.liver"-->
-<!--          placeholder="请输入肝损描述"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
 <!--      <el-form-item label="创建人" prop="createUser">-->
 <!--        <el-input-->
 <!--          v-model="queryParams.createUser"-->
@@ -56,15 +37,15 @@
 <!--          @keyup.enter.native="handleQuery"-->
 <!--        />-->
 <!--      </el-form-item>-->
-      <el-form-item label="分值" prop="score">
-        <el-input
-          v-model="queryParams.score"
-          placeholder="请输入分值"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="分值" prop="score">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.score"-->
+<!--          placeholder="请输入分值"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -79,7 +60,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['rud:hepatopathy:add']"
+          v-hasPermi="['rud:suckle:add']"
         >新增</el-button>
       </el-col>
 <!--      <el-col :span="1.5">-->
@@ -90,7 +71,7 @@
 <!--          size="mini"-->
 <!--          :disabled="single"-->
 <!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['rud:hepatopathy:edit']"-->
+<!--          v-hasPermi="['rud:suckle:edit']"-->
 <!--        >修改</el-button>-->
 <!--      </el-col>-->
 <!--      <el-col :span="1.5">-->
@@ -101,7 +82,7 @@
 <!--          size="mini"-->
 <!--          :disabled="multiple"-->
 <!--          @click="handleDelete"-->
-<!--          v-hasPermi="['rud:hepatopathy:remove']"-->
+<!--          v-hasPermi="['rud:suckle:remove']"-->
 <!--        >删除</el-button>-->
 <!--      </el-col>-->
       <el-col :span="1.5">
@@ -111,22 +92,16 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['rud:hepatopathy:export']"
+          v-hasPermi="['rud:suckle:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="hepatopathyList">
+    <el-table v-loading="loading" :data="suckleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="分值" align="center" prop="id" />
+      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="药品通用名" align="center" prop="drugName" />
-      <el-table-column label="是否区分疾病严重" align="center" prop="isSerious">
-        <template slot-scope="scope">
-          <dict-tag :options="isSeriousOptions" :value="scope.row.isSerious"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="肝损描述" align="center" prop="liver" />
       <el-table-column label="创建人" align="center" prop="createUser" />
       <el-table-column label="更新人" align="center" prop="updateUser" />
       <el-table-column label="询证" align="center" prop="evidence" />
@@ -139,14 +114,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['rud:hepatopathy:edit']"
+            v-hasPermi="['rud:suckle:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['rud:hepatopathy:remove']"
+            v-hasPermi="['rud:suckle:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -160,24 +135,11 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改肝损用药禁忌对话框 -->
+    <!-- 添加或修改哺乳用药规则对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="药品通用名" prop="drugName">
           <el-input v-model="form.drugName" placeholder="请输入药品通用名" />
-        </el-form-item>
-        <el-form-item label="是否区分疾病严重" prop="isSerious">
-          <el-select v-model="form.isSerious" placeholder="请选择是否区分疾病严重">
-            <el-option
-              v-for="dict in isSeriousOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="肝损描述" prop="liver">
-          <el-input v-model="form.liver" placeholder="请输入肝损描述" />
         </el-form-item>
         <el-form-item label="创建人" prop="createUser">
           <el-input v-model="form.createUser" placeholder="请输入创建人" />
@@ -204,10 +166,10 @@
 </template>
 
 <script>
-import { listHepatopathy, getHepatopathy, delHepatopathy, addHepatopathy, updateHepatopathy } from "@/api/rud/hepatopathy/hepatopathy";
+import { listSuckle, getSuckle, delSuckle, addSuckle, updateSuckle } from "@/api/rud/rule/rulesuckle/suckle";
 
 export default {
-  name: "Hepatopathy",
+  name: "Suckle",
   data() {
     return {
       // 遮罩层
@@ -222,32 +184,17 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 肝损用药禁忌表格数据
-      hepatopathyList: [],
+      // 哺乳用药规则表格数据
+      suckleList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 是否区分疾病严重字典
-      isSeriousOptions: [
-        {
-          dictLabel: "是",
-          dictType: "sys_normal_disable",
-          dictValue: "1"
-        },
-        {
-          dictLabel: "否",
-          dictType: "sys_normal_disable",
-          dictValue: "2"
-        }
-      ],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         drugName: null,
-        isSerious: null,
-        liver: null,
         createUser: null,
         updateUser: null,
         evidence: null,
@@ -260,12 +207,6 @@ export default {
       rules: {
         drugName: [
           { required: true, message: "药品通用名不能为空", trigger: "blur" }
-        ],
-        isSerious: [
-          { required: true, message: "是否区分疾病严重不能为空", trigger: "change" }
-        ],
-        liver: [
-          { required: true, message: "肝损描述不能为空", trigger: "blur" }
         ],
         createUser: [
           { required: true, message: "创建人不能为空", trigger: "blur" }
@@ -293,16 +234,13 @@ export default {
   },
   created() {
     this.getList();
-    // this.getDicts("sys_yes_no").then(response => {
-    //   this.isSeriousOptions = response.data;
-    // });
   },
   methods: {
-    /** 查询肝损用药禁忌列表 */
+    /** 查询哺乳用药规则列表 */
     getList() {
       this.loading = true;
-      listHepatopathy(this.queryParams).then(response => {
-        this.hepatopathyList = response.rows;
+      listSuckle(this.queryParams).then(response => {
+        this.suckleList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -317,8 +255,6 @@ export default {
       this.form = {
         id: null,
         drugName: null,
-        isSerious: null,
-        liver: null,
         createUser: null,
         createTime: null,
         updateUser: null,
@@ -349,16 +285,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加肝损用药禁忌";
+      this.title = "添加哺乳用药规则";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getHepatopathy(id).then(response => {
+      getSuckle(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改肝损用药禁忌";
+        this.title = "修改哺乳用药规则";
       });
     },
     /** 提交按钮 */
@@ -366,13 +302,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateHepatopathy(this.form).then(response => {
+            updateSuckle(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addHepatopathy(this.form).then(response => {
+            addSuckle(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -384,12 +320,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除肝损用药禁忌编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除哺乳用药规则编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delHepatopathy(ids);
+          return delSuckle(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -397,9 +333,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('lkai-rud/hepatopathy/export', {
+      this.download('lkai-rud/suckle/export', {
         ...this.queryParams
-      }, `rud_hepatopathy.xlsx`)
+      }, `rud_suckle.xlsx`)
     }
   }
 };
