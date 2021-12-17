@@ -10,24 +10,40 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="禁用性别" prop="sex">
-        <el-select v-model="queryParams.sex" placeholder="请选择禁用性别" clearable size="small">
-          <el-option
-            v-for="dict in sexOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="询证来源" prop="source">
+      <el-form-item label="是否区分疾病严重等级 1是0否  暂不启用" prop="isSubdivide">
         <el-input
-          v-model="queryParams.source"
-          placeholder="请输入询证来源"
+          v-model="queryParams.isSubdivide"
+          placeholder="请输入是否区分疾病严重等级 1是0否  暂不启用"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="规则所有者信息" prop="createUser">
+        <el-input
+          v-model="queryParams.createUser"
+          placeholder="请输入规则所有者信息"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="更新人" prop="updateUser">
+        <el-input
+          v-model="queryParams.updateUser"
+          placeholder="请输入更新人"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="更新时间" prop="updateTime">
+        <el-date-picker clearable size="small"
+          v-model="queryParams.updateTime"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="选择更新时间">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="分值" prop="score">
         <el-input
@@ -52,7 +68,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['rud:ruleSex:add']"
+          v-hasPermi="['drug:nephropathy:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -63,7 +79,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['rud:ruleSex:edit']"
+          v-hasPermi="['drug:nephropathy:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -74,7 +90,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['rud:ruleSex:remove']"
+          v-hasPermi="['drug:nephropathy:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -84,22 +100,17 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['rud:ruleSex:export']"
+          v-hasPermi="['drug:nephropathy:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="ruleSexList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="nephropathyList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
+      <el-table-column label="分值" align="center" prop="id" />
       <el-table-column label="药品通用名" align="center" prop="drugName" />
-      <el-table-column label="禁用性别" align="center" prop="sex">
-        <template slot-scope="scope">
-          <dict-tag :options="sexOptions" :value="scope.row.sex"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建人" align="center" prop="createUser" />
+      <el-table-column label="是否区分疾病严重等级 1是0否  暂不启用" align="center" prop="isSubdivide" />
       <el-table-column label="更新人" align="center" prop="updateUser" />
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template slot-scope="scope">
@@ -108,7 +119,11 @@
       </el-table-column>
       <el-table-column label="询证" align="center" prop="evidence" />
       <el-table-column label="询证来源" align="center" prop="source" />
-      <el-table-column label="分值" align="center" prop="score" />
+      <el-table-column label="分值" align="center" prop="score">
+        <template slot-scope="scope">
+          <dict-tag :options="scoreOptions" :value="scope.row.score"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -116,14 +131,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['rud:ruleSex:edit']"
+            v-hasPermi="['drug:nephropathy:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['rud:ruleSex:remove']"
+            v-hasPermi="['drug:nephropathy:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -137,27 +152,14 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改性别用药对话框 -->
+    <!-- 添加或修改肾损用药对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="药品通用名" prop="drugName">
           <el-input v-model="form.drugName" placeholder="请输入药品通用名" />
         </el-form-item>
-        <el-form-item label="禁用性别" prop="sex">
-          <el-select v-model="form.sex" placeholder="请选择禁用性别：男、女">
-            <el-option
-              v-for="dict in sexOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="创建人" prop="createUser">
-          <el-input v-model="form.createUser" placeholder="请输入创建人" />
-        </el-form-item>
-        <el-form-item label="更新人" prop="updateUser">
-          <el-input v-model="form.updateUser" placeholder="请输入更新人" />
+        <el-form-item label="是否区分疾病严重等级 1是0否  暂不启用" prop="isSubdivide">
+          <el-input v-model="form.isSubdivide" placeholder="请输入是否区分疾病严重等级 1是0否  暂不启用" />
         </el-form-item>
         <el-form-item label="询证" prop="evidence">
           <el-input v-model="form.evidence" type="textarea" placeholder="请输入内容" />
@@ -178,10 +180,10 @@
 </template>
 
 <script>
-import { listRuleSex, getRuleSex, delRuleSex, addRuleSex, updateRuleSex } from "@/api/rud/rule/rulesex";
+import { listNephropathy, getNephropathy, delNephropathy, addNephropathy, updateNephropathy } from "@/api/rud/rule/rulenephropathy";
 
 export default {
-  name: "RuleSex",
+  name: "Nephropathy",
   data() {
     return {
       // 遮罩层
@@ -196,22 +198,23 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 性别用药表格数据
-      ruleSexList: [],
+      // 肾损用药表格数据
+      nephropathyList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 禁用性别：男、女字典
-      sexOptions: [],
+      // 分值字典
+      scoreOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         drugName: null,
-        sex: null,
-        evidence: null,
-        source: null,
+        isSubdivide: null,
+        createUser: null,
+        updateUser: null,
+        updateTime: null,
         score: null
       },
       // 表单参数
@@ -221,14 +224,17 @@ export default {
         drugName: [
           { required: true, message: "药品通用名不能为空", trigger: "blur" }
         ],
-        sex: [
-          { required: true, message: "禁用性别不能为空", trigger: "change" }
+        kidney: [
+          { required: true, message: "肾损描述不能为空", trigger: "blur" }
         ],
-        createUser: [
-          { required: true, message: "创建人不能为空", trigger: "blur" }
+        isSubdivide: [
+          { required: true, message: "是否区分疾病严重等级 1是0否  暂不启用不能为空", trigger: "blur" }
         ],
         createTime: [
           { required: true, message: "创建时间不能为空", trigger: "blur" }
+        ],
+        createUser: [
+          { required: true, message: "规则所有者信息不能为空", trigger: "blur" }
         ],
         updateUser: [
           { required: true, message: "更新人不能为空", trigger: "blur" }
@@ -250,16 +256,16 @@ export default {
   },
   created() {
     this.getList();
-    this.getDicts("sys_rule_sex").then(response => {
-      this.sexOptions = response.data;
+    this.getDicts("risk_score").then(response => {
+      this.scoreOptions = response.data;
     });
   },
   methods: {
-    /** 查询性别用药列表 */
+    /** 查询肾损用药列表 */
     getList() {
       this.loading = true;
-      listRuleSex(this.queryParams).then(response => {
-        this.ruleSexList = response.rows;
+      listNephropathy(this.queryParams).then(response => {
+        this.nephropathyList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -274,9 +280,10 @@ export default {
       this.form = {
         id: null,
         drugName: null,
-        sex: null,
-        createUser: null,
+        kidney: null,
+        isSubdivide: null,
         createTime: null,
+        createUser: null,
         updateUser: null,
         updateTime: null,
         evidence: null,
@@ -305,16 +312,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加性别用药";
+      this.title = "添加肾损用药";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getRuleSex(id).then(response => {
+      getNephropathy(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改性别用药";
+        this.title = "修改肾损用药";
       });
     },
     /** 提交按钮 */
@@ -322,13 +329,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateRuleSex(this.form).then(response => {
+            updateNephropathy(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addRuleSex(this.form).then(response => {
+            addNephropathy(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -340,12 +347,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除性别用药编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除肾损用药编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delRuleSex(ids);
+          return delNephropathy(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -353,9 +360,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('rud/ruleSex/export', {
+      this.download('drug/nephropathy/export', {
         ...this.queryParams
-      }, `rud_ruleSex.xlsx`)
+      }, `drug_nephropathy.xlsx`)
     }
   }
 };

@@ -10,6 +10,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="是否区分疾病严重" prop="isSerious">
+        <el-select v-model="queryParams.isSerious" placeholder="请选择是否区分疾病严重" clearable size="small">
+          <el-option
+            v-for="dict in isSeriousOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
+        </el-select>
+      </el-form-item>
 <!--      <el-form-item label="肝损描述" prop="liver">-->
 <!--        <el-input-->
 <!--          v-model="queryParams.liver"-->
@@ -46,15 +56,15 @@
 <!--          @keyup.enter.native="handleQuery"-->
 <!--        />-->
 <!--      </el-form-item>-->
-<!--      <el-form-item label="分值" prop="score">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.score"-->
-<!--          placeholder="请输入分值"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
+      <el-form-item label="分值" prop="score">
+        <el-input
+          v-model="queryParams.score"
+          placeholder="请输入分值"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -107,10 +117,15 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="hepatopathyList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="hepatopathyList">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="分值" align="center" prop="id" />
       <el-table-column label="药品通用名" align="center" prop="drugName" />
+      <el-table-column label="是否区分疾病严重" align="center" prop="isSerious">
+        <template slot-scope="scope">
+          <dict-tag :options="isSeriousOptions" :value="scope.row.isSerious"/>
+        </template>
+      </el-table-column>
       <el-table-column label="肝损描述" align="center" prop="liver" />
       <el-table-column label="创建人" align="center" prop="createUser" />
       <el-table-column label="更新人" align="center" prop="updateUser" />
@@ -150,6 +165,16 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="药品通用名" prop="drugName">
           <el-input v-model="form.drugName" placeholder="请输入药品通用名" />
+        </el-form-item>
+        <el-form-item label="是否区分疾病严重" prop="isSerious">
+          <el-select v-model="form.isSerious" placeholder="请选择是否区分疾病严重">
+            <el-option
+              v-for="dict in isSeriousOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="肝损描述" prop="liver">
           <el-input v-model="form.liver" placeholder="请输入肝损描述" />
@@ -203,11 +228,25 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否区分疾病严重字典
+      isSeriousOptions: [
+        {
+          dictLabel: "是",
+          dictType: "sys_normal_disable",
+          dictValue: "1"
+        },
+        {
+          dictLabel: "否",
+          dictType: "sys_normal_disable",
+          dictValue: "2"
+        }
+      ],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         drugName: null,
+        isSerious: null,
         liver: null,
         createUser: null,
         updateUser: null,
@@ -221,6 +260,9 @@ export default {
       rules: {
         drugName: [
           { required: true, message: "药品通用名不能为空", trigger: "blur" }
+        ],
+        isSerious: [
+          { required: true, message: "是否区分疾病严重不能为空", trigger: "change" }
         ],
         liver: [
           { required: true, message: "肝损描述不能为空", trigger: "blur" }
@@ -251,6 +293,9 @@ export default {
   },
   created() {
     this.getList();
+    // this.getDicts("sys_yes_no").then(response => {
+    //   this.isSeriousOptions = response.data;
+    // });
   },
   methods: {
     /** 查询肝损用药禁忌列表 */
@@ -272,6 +317,7 @@ export default {
       this.form = {
         id: null,
         drugName: null,
+        isSerious: null,
         liver: null,
         createUser: null,
         createTime: null,

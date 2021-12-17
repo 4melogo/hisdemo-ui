@@ -192,8 +192,16 @@
 <!--            placeholder="选择上传时间">-->
 <!--          </el-date-picker>-->
 <!--        </el-form-item>-->
+
         <el-form-item label="医院等级" prop="hospitalLevel">
-          <el-input v-model="form.hospitalLevel" placeholder="请输入医院等级" />
+          <el-select v-model="form.hospitalLevel" placeholder="请输入医院等级">
+            <el-option
+              v-for="dict in hospitalLevels"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="医院名称" prop="hospitalname">
           <el-input v-model="form.hospitalname" placeholder="请输入医院名称" />
@@ -237,8 +245,9 @@
 </template>
 
 <script>
+
 import { listInfo, getInfo, delInfo, addInfo, updateInfo, fileUpload,download } from "@/api/drug/info";
-// import {formatDate} from "../../utils";
+import {formatDate} from "../../utils";
 import { downLoadZip } from "@/utils/zipdownload";
 export default {
   name: "Info",
@@ -282,6 +291,14 @@ export default {
         hospitalLevel: '',
         hospitalname: '',
       },
+      hospitalLevels:[
+      {
+        lable:"二级医院",
+        value:"二级医院"
+      },{
+        lable:"三级医院",
+        value:"三级医院"
+      }],
       // 表单参数
       form: {
         fileList: []

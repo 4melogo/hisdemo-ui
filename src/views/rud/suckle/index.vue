@@ -10,34 +10,42 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="禁用性别" prop="sex">
-        <el-select v-model="queryParams.sex" placeholder="请选择禁用性别" clearable size="small">
-          <el-option
-            v-for="dict in sexOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="询证来源" prop="source">
-        <el-input
-          v-model="queryParams.source"
-          placeholder="请输入询证来源"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="分值" prop="score">
-        <el-input
-          v-model="queryParams.score"
-          placeholder="请输入分值"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="创建人" prop="createUser">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.createUser"-->
+<!--          placeholder="请输入创建人"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="更新人" prop="updateUser">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.updateUser"-->
+<!--          placeholder="请输入更新人"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="询证来源" prop="source">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.source"-->
+<!--          placeholder="请输入询证来源"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="分值" prop="score">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.score"-->
+<!--          placeholder="请输入分值"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -52,31 +60,31 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['rud:ruleSex:add']"
+          v-hasPermi="['rud:suckle:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['rud:ruleSex:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['rud:ruleSex:remove']"
-        >删除</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="success"-->
+<!--          plain-->
+<!--          icon="el-icon-edit"-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['rud:suckle:edit']"-->
+<!--        >修改</el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="danger"-->
+<!--          plain-->
+<!--          icon="el-icon-delete"-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handleDelete"-->
+<!--          v-hasPermi="['rud:suckle:remove']"-->
+<!--        >删除</el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -84,28 +92,18 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['rud:ruleSex:export']"
+          v-hasPermi="['rud:suckle:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="ruleSexList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="suckleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="药品通用名" align="center" prop="drugName" />
-      <el-table-column label="禁用性别" align="center" prop="sex">
-        <template slot-scope="scope">
-          <dict-tag :options="sexOptions" :value="scope.row.sex"/>
-        </template>
-      </el-table-column>
       <el-table-column label="创建人" align="center" prop="createUser" />
       <el-table-column label="更新人" align="center" prop="updateUser" />
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="询证" align="center" prop="evidence" />
       <el-table-column label="询证来源" align="center" prop="source" />
       <el-table-column label="分值" align="center" prop="score" />
@@ -116,14 +114,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['rud:ruleSex:edit']"
+            v-hasPermi="['rud:suckle:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['rud:ruleSex:remove']"
+            v-hasPermi="['rud:suckle:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -137,21 +135,11 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改性别用药对话框 -->
+    <!-- 添加或修改哺乳用药规则对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="药品通用名" prop="drugName">
           <el-input v-model="form.drugName" placeholder="请输入药品通用名" />
-        </el-form-item>
-        <el-form-item label="禁用性别" prop="sex">
-          <el-select v-model="form.sex" placeholder="请选择禁用性别：男、女">
-            <el-option
-              v-for="dict in sexOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
         </el-form-item>
         <el-form-item label="创建人" prop="createUser">
           <el-input v-model="form.createUser" placeholder="请输入创建人" />
@@ -178,10 +166,10 @@
 </template>
 
 <script>
-import { listRuleSex, getRuleSex, delRuleSex, addRuleSex, updateRuleSex } from "@/api/rud/rule/rulesex";
+import { listSuckle, getSuckle, delSuckle, addSuckle, updateSuckle } from "@/api/rud/rule/rulesuckle/suckle";
 
 export default {
-  name: "RuleSex",
+  name: "Suckle",
   data() {
     return {
       // 遮罩层
@@ -196,20 +184,19 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 性别用药表格数据
-      ruleSexList: [],
+      // 哺乳用药规则表格数据
+      suckleList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 禁用性别：男、女字典
-      sexOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         drugName: null,
-        sex: null,
+        createUser: null,
+        updateUser: null,
         evidence: null,
         source: null,
         score: null
@@ -220,9 +207,6 @@ export default {
       rules: {
         drugName: [
           { required: true, message: "药品通用名不能为空", trigger: "blur" }
-        ],
-        sex: [
-          { required: true, message: "禁用性别不能为空", trigger: "change" }
         ],
         createUser: [
           { required: true, message: "创建人不能为空", trigger: "blur" }
@@ -250,16 +234,13 @@ export default {
   },
   created() {
     this.getList();
-    this.getDicts("sys_rule_sex").then(response => {
-      this.sexOptions = response.data;
-    });
   },
   methods: {
-    /** 查询性别用药列表 */
+    /** 查询哺乳用药规则列表 */
     getList() {
       this.loading = true;
-      listRuleSex(this.queryParams).then(response => {
-        this.ruleSexList = response.rows;
+      listSuckle(this.queryParams).then(response => {
+        this.suckleList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -274,7 +255,6 @@ export default {
       this.form = {
         id: null,
         drugName: null,
-        sex: null,
         createUser: null,
         createTime: null,
         updateUser: null,
@@ -305,16 +285,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加性别用药";
+      this.title = "添加哺乳用药规则";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getRuleSex(id).then(response => {
+      getSuckle(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改性别用药";
+        this.title = "修改哺乳用药规则";
       });
     },
     /** 提交按钮 */
@@ -322,13 +302,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateRuleSex(this.form).then(response => {
+            updateSuckle(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addRuleSex(this.form).then(response => {
+            addSuckle(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -340,12 +320,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除性别用药编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除哺乳用药规则编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delRuleSex(ids);
+          return delSuckle(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -353,9 +333,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('rud/ruleSex/export', {
+      this.download('lkai-rud/suckle/export', {
         ...this.queryParams
-      }, `rud_ruleSex.xlsx`)
+      }, `rud_suckle.xlsx`)
     }
   }
 };
