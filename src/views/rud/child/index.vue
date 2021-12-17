@@ -229,7 +229,7 @@
 </template>
 
 <script>
-import { listChild, getChild, delChild, addChild, updateChild } from "@/api/rud/rule/rulechild/child";
+import { listChild, getChild, delChild, addChild, updateChild } from "@/api/rud/rule/child";
 
 export default {
   name: "Child",

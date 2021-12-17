@@ -267,7 +267,7 @@
 </template>
 
 <script>
-import { listRuleusage, getRuleusage, delRuleusage, addRuleusage, updateRuleusage } from "@/api/rud/rule/ruleusagedosage/ruleusage";
+import { listRuleusage, getRuleusage, delRuleusage, addRuleusage, updateRuleusage } from "@/api/rud/rule/ruleusage";
 
 export default {
   name: "Ruleusage",

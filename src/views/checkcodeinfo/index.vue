@@ -237,9 +237,8 @@
 </template>
 
 <script>
-import { listInfo, getInfo, delInfo, addInfo, updateInfo, fileUpload,download } from "@/api/drug/info";
-// import {formatDate} from "../../utils";
-import { downLoadZip } from "@/utils/zipdownload";
+
+
 export default {
   name: "Info",
   data() {

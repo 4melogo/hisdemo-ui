@@ -1,38 +1,37 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="药品通用名" prop="drugName">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px">
+      <el-form-item label="对码记录ID" prop="checkcodeId">
         <el-input
-          v-model="queryParams.drugName"
-          placeholder="请输入药品通用名"
+          v-model="queryParams.checkcodeId"
+          placeholder="请输入对码记录ID"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="禁用性别" prop="sex">
-        <el-select v-model="queryParams.sex" placeholder="请选择禁用性别" clearable size="small">
-          <el-option
-            v-for="dict in sexOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="询证来源" prop="source">
+      <el-form-item label="医院名称" prop="hospital">
         <el-input
-          v-model="queryParams.source"
-          placeholder="请输入询证来源"
+          v-model="queryParams.hospital"
+          placeholder="请输入医院名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="分值" prop="score">
+      <el-form-item label="医院给药途径" prop="hospitalRoute">
         <el-input
-          v-model="queryParams.score"
-          placeholder="请输入分值"
+          v-model="queryParams.hospitalRoute"
+          placeholder="请输入医院给药途径"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="标准给药途径ID" prop="standardRouteId">
+        <el-input
+          v-model="queryParams.standardRouteId"
+          placeholder="请输入标准给药途径ID"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -52,7 +51,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['rud:ruleSex:add']"
+          v-hasPermi="['drugroute:drugroute:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -63,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['rud:ruleSex:edit']"
+          v-hasPermi="['drugroute:drugroute:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -74,7 +73,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['rud:ruleSex:remove']"
+          v-hasPermi="['drugroute:drugroute:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -84,31 +83,25 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['rud:ruleSex:export']"
+          v-hasPermi="['drugroute:drugroute:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="ruleSexList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="drugrouteList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="药品通用名" align="center" prop="drugName" />
-      <el-table-column label="禁用性别" align="center" prop="sex">
+      <el-table-column label="主键ID" align="center" prop="id" />
+      <el-table-column label="对码记录ID" align="center" prop="checkcodeId" />
+      <el-table-column label="医院名称" align="center" prop="hospital" />
+      <el-table-column label="医院给药途径" align="center" prop="hospitalRoute" />
+      <el-table-column label="标准给药途径" align="center" prop="standardRoute" />
+      <el-table-column label="给药途径分类" align="center" prop="routeType" />
+      <el-table-column label="修改时间" align="center" prop="createTime">
         <template slot-scope="scope">
-          <dict-tag :options="sexOptions" :value="scope.row.sex"/>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" align="center" prop="createUser" />
-      <el-table-column label="更新人" align="center" prop="updateUser" />
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="询证" align="center" prop="evidence" />
-      <el-table-column label="询证来源" align="center" prop="source" />
-      <el-table-column label="分值" align="center" prop="score" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -116,14 +109,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['rud:ruleSex:edit']"
+            v-hasPermi="['drugroute:drugroute:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['rud:ruleSex:remove']"
+            v-hasPermi="['drugroute:drugroute:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -137,36 +130,33 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改性别用药对话框 -->
+    <!-- 添加或修改医院给药途径标准化结果对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="药品通用名" prop="drugName">
-          <el-input v-model="form.drugName" placeholder="请输入药品通用名" />
+        <el-form-item label="对码记录ID" prop="checkcodeId">
+          <el-input v-model="form.checkcodeId" placeholder="请输入对码记录ID" />
         </el-form-item>
-        <el-form-item label="禁用性别" prop="sex">
-          <el-select v-model="form.sex" placeholder="请选择禁用性别：男、女">
+        <el-form-item label="医院名称" prop="hospital">
+          <el-input v-model="form.hospital" placeholder="请输入医院名称" />
+        </el-form-item>
+        <el-form-item label="真实世界医院给药途径" prop="hospitalRoute">
+          <el-input v-model="form.hospitalRoute" placeholder="请输入真实世界医院给药途径" />
+        </el-form-item>
+        <el-form-item label="标准给药途径" prop="standardRouteId">
+          <el-select v-model="form.standardRouteId"
+                     filterable
+                     remote
+                     reserve-keyword
+                     :remote-method="getDrugrouteList"
+                     :loading="loadingSelect"
+                     placeholder="标准给药途径">
             <el-option
-              v-for="dict in sexOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
+              v-for="item in standardRoute"
+              :key="item.id"
+              :label="item.standardRoute"
+              :value="item.id">
+            </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="创建人" prop="createUser">
-          <el-input v-model="form.createUser" placeholder="请输入创建人" />
-        </el-form-item>
-        <el-form-item label="更新人" prop="updateUser">
-          <el-input v-model="form.updateUser" placeholder="请输入更新人" />
-        </el-form-item>
-        <el-form-item label="询证" prop="evidence">
-          <el-input v-model="form.evidence" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="询证来源" prop="source">
-          <el-input v-model="form.source" placeholder="请输入询证来源" />
-        </el-form-item>
-        <el-form-item label="分值" prop="score">
-          <el-input v-model="form.score" placeholder="请输入分值" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -178,10 +168,10 @@
 </template>
 
 <script>
-import { listRuleSex, getRuleSex, delRuleSex, addRuleSex, updateRuleSex } from "@/api/rud/rule/rulesex";
+import { listDrugroute, getDrugroute, delDrugroute, addDrugroute, updateDrugroute, getRouteCatelogList } from "@/api/datamatching/drugroute";
 
 export default {
-  name: "RuleSex",
+  name: "Drugroute",
   data() {
     return {
       // 遮罩层
@@ -194,72 +184,49 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
+
+      loadingSelect:false,
       // 总条数
       total: 0,
-      // 性别用药表格数据
-      ruleSexList: [],
+      // 医院给药途径标准化结果表格数据
+      drugrouteList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 禁用性别：男、女字典
-      sexOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        drugName: null,
-        sex: null,
-        evidence: null,
-        source: null,
-        score: null
+        checkcodeId: null,
+        hospital: null,
+        hospitalRoute: null,
+        standardRouteId: null
       },
       // 表单参数
       form: {},
+      standardRoute:[{
+        standardRouteName:'',
+        standardRouteId:'',
+      }],
       // 表单校验
       rules: {
-        drugName: [
-          { required: true, message: "药品通用名不能为空", trigger: "blur" }
-        ],
-        sex: [
-          { required: true, message: "禁用性别不能为空", trigger: "change" }
-        ],
-        createUser: [
-          { required: true, message: "创建人不能为空", trigger: "blur" }
-        ],
-        createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
-        ],
-        updateUser: [
-          { required: true, message: "更新人不能为空", trigger: "blur" }
-        ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
-        ],
-        evidence: [
-          { required: true, message: "询证不能为空", trigger: "blur" }
-        ],
-        source: [
-          { required: true, message: "询证来源不能为空", trigger: "blur" }
-        ],
-        score: [
-          { required: true, message: "分值不能为空", trigger: "blur" }
-        ]
       }
     };
   },
   created() {
     this.getList();
-    this.getDicts("sys_rule_sex").then(response => {
-      this.sexOptions = response.data;
-    });
   },
   methods: {
-    /** 查询性别用药列表 */
+    /** 查询医院给药途径标准化结果列表 */
     getList() {
       this.loading = true;
-      listRuleSex(this.queryParams).then(response => {
-        this.ruleSexList = response.rows;
+      console.log(this.$route.query.checkcodeId)
+      if(this.$route.query.checkcodeId != undefined){
+        this.queryParams.checkcodeId = this.$route.query.checkcodeId
+      }
+      listDrugroute(this.queryParams).then(response => {
+        this.drugrouteList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -273,15 +240,10 @@ export default {
     reset() {
       this.form = {
         id: null,
-        drugName: null,
-        sex: null,
-        createUser: null,
-        createTime: null,
-        updateUser: null,
-        updateTime: null,
-        evidence: null,
-        source: null,
-        score: null
+        checkcodeId: null,
+        hospital: null,
+        hospitalRoute: null,
+        standardRouteId: null
       };
       this.resetForm("form");
     },
@@ -305,16 +267,22 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加性别用药";
+      this.title = "添加医院给药途径标准化结果";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getRuleSex(id).then(response => {
+      getDrugroute(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改性别用药";
+        this.title = "修改医院给药途径标准化结果";
+      });
+    },
+    /** 查询修改页面的所有标准给药途径，填充下拉选 */
+    getDrugrouteList(query){
+      getRouteCatelogList(query).then(res=>{
+        this.standardRoute = res.rows
       });
     },
     /** 提交按钮 */
@@ -322,13 +290,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateRuleSex(this.form).then(response => {
+            updateDrugroute(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addRuleSex(this.form).then(response => {
+            addDrugroute(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -340,12 +308,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除性别用药编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除医院给药途径标准化结果编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delRuleSex(ids);
+          return delDrugroute(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -353,9 +321,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('rud/ruleSex/export', {
+      this.download('drugroute/drugroute/export', {
         ...this.queryParams
-      }, `rud_ruleSex.xlsx`)
+      }, `drugroute_drugroute.xlsx`)
     }
   }
 };

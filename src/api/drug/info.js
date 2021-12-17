@@ -50,23 +50,6 @@ export function fileUpload(param) {
   })
 }
 
-export function download(param) {
-  return request({
-    url: '/lkai-datamatching/info/download',
-    method: 'post',
-    responseType:'blob',
-    data: param
-  })
-}
-
-export function selectDrugCatalog(param) {
-  return request({
-    url: '/lkai-datamatching/catalog/list',
-    method: 'get',
-    params: param
-  })
-}
-
 
 
 
