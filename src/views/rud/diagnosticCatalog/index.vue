@@ -150,7 +150,7 @@
           <el-input v-model="form.updateUser" placeholder="请输入更新人" />
         </el-form-item>
         <el-form-item label="诊断标签" prop="diagnosisLabel">
-          <el-select v-model="form.diagnosisLabel" placeholder="请输入诊断标签" >
+          <el-select v-model="form.diagnosisLabel" filterable placeholder="请输入诊断标签" >
             <el-option
               v-for="dict in diagnosisLabelList"
               :key="dict.id"
