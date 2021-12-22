@@ -17,6 +17,14 @@ export function getRuleusage(id) {
   })
 }
 
+// 查询用法用量详细
+export function getRuleusage1(drug_id) {
+  return request({
+    url: '/lkai-rud/ruleusage/queryByDrugid/' + drug_id,
+    method: 'get'
+  })
+}
+
 // 新增用法用量
 export function addRuleusage(data) {
   return request({

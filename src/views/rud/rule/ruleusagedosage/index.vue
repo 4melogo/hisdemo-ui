@@ -12,7 +12,12 @@
       </el-form-item>
       <el-form-item label="药品给药途径" prop="drugRoute">
         <el-select v-model="queryParams.drugRoute" placeholder="请选择药品给药途径" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
+          <el-option
+            v-for="dict in drugRouteOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="规则类型   口服/注射/外用" prop="routeType">
@@ -168,11 +173,16 @@
 <!--        </el-form-item>-->
         <el-form-item label="药品给药途径" prop="drugRoute">
           <el-select v-model="form.drugRoute" placeholder="请选择药品给药途径">
-            <el-option label="请选择字典生成" value="" />
+            <el-option
+              v-for="dict in drugRouteOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="规则类型" prop="routeType">
-          <el-select v-model="form.routeType" placeholder="请选择规则类型">
+        <el-form-item label="规则类型   口服/注射/外用" prop="routeType">
+          <el-select v-model="form.routeType" placeholder="请选择规则类型   口服/注射/外用">
             <el-option
               v-for="dict in routeTypeOptions"
               :key="dict.dictValue"
@@ -184,21 +194,20 @@
         <el-form-item label="说明书记要(循证)" prop="evidence">
           <el-input v-model="form.evidence" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-
-        <el-form-item label="频次时间周期上限" prop="frequencyTimeMax">
-          <el-input v-model="form.frequencyTimeMax" placeholder="请输入频次时间周期上限" />
-        </el-form-item>
-        <el-form-item label="频次时间周期下限" prop="frequencyTimeMin">
-          <el-input v-model="form.frequencyTimeMin" placeholder="请输入频次时间周期下限" />
-        </el-form-item>
-        <el-form-item label="频次时间单位" prop="frequencyUnit">
-          <el-input v-model="form.frequencyUnit" placeholder="请输入频次时间单位" />
-        </el-form-item>
         <el-form-item label="最小次数" prop="frequencyMin">
           <el-input v-model="form.frequencyMin" placeholder="请输入最小次数" />
         </el-form-item>
         <el-form-item label="最大次数" prop="frequencyMax">
           <el-input v-model="form.frequencyMax" placeholder="请输入最大次数" />
+        </el-form-item>
+        <el-form-item label="频次时间周期下限" prop="frequencyTimeMin">
+          <el-input v-model="form.frequencyTimeMin" placeholder="请输入频次时间周期下限" />
+        </el-form-item>
+        <el-form-item label="频次时间周期上限" prop="frequencyTimeMax">
+          <el-input v-model="form.frequencyTimeMax" placeholder="请输入频次时间周期上限" />
+        </el-form-item>
+        <el-form-item label="频次时间单位" prop="frequencyUnit">
+          <el-input v-model="form.frequencyUnit" placeholder="请输入频次时间单位" />
         </el-form-item>
         <el-form-item label="单次最小剂量" prop="onceMin">
           <el-input v-model="form.onceMin" placeholder="请输入单次最小剂量" />
@@ -209,7 +218,9 @@
         <el-form-item label="单次常规单位" prop="onceUnit">
           <el-input v-model="form.onceUnit" placeholder="请输入单次常规单位" />
         </el-form-item>
-
+        <el-form-item label="单次极量" prop="onceTop">
+          <el-input v-model="form.onceTop" placeholder="请输入单次极量" />
+        </el-form-item>
         <el-form-item label="单日最小剂量" prop="dayMin">
           <el-input v-model="form.dayMin" placeholder="请输入单日最小剂量" />
         </el-form-item>
@@ -218,9 +229,6 @@
         </el-form-item>
         <el-form-item label="单日剂量单位" prop="dayUnit">
           <el-input v-model="form.dayUnit" placeholder="请输入单日剂量单位" />
-        </el-form-item>
-        <el-form-item label="单次极量" prop="onceTop">
-          <el-input v-model="form.onceTop" placeholder="请输入单次极量" />
         </el-form-item>
         <el-form-item label="单日极量" prop="dayTop">
           <el-input v-model="form.dayTop" placeholder="请输入单日极量" />
@@ -246,7 +254,10 @@
         <el-form-item label="年龄单位" prop="ageUnit">
           <el-input v-model="form.ageUnit" placeholder="请输入年龄单位" />
         </el-form-item>
-        <el-form-item label="年龄类型" prop="ageType">
+        <el-form-item label="年龄范围   12-18岁" prop="ageGroup">
+          <el-input v-model="form.ageGroup" placeholder="请输入年龄范围   12-18岁" />
+        </el-form-item>
+        <el-form-item label="年龄类型： 儿童、成人、老人" prop="ageType">
           <el-select v-model="form.ageType" placeholder="请选择年龄类型： 儿童、成人、老人">
             <el-option label="请选择字典生成" value="" />
           </el-select>
@@ -257,11 +268,25 @@
         <el-form-item label="询证来源" prop="source">
           <el-input v-model="form.source" placeholder="请输入询证来源" />
         </el-form-item>
+        <el-form-item label="创建时间" prop="caeateTime">
+          <el-date-picker clearable size="small"
+            v-model="form.caeateTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择创建时间">
+          </el-date-picker>
+        </el-form-item>
+<!--        <el-form-item label="创建人" prop="createUser">-->
+<!--          <el-input v-model="form.createUser" placeholder="请输入创建人" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="更新人" prop="updateUser">-->
+<!--          <el-input v-model="form.updateUser" placeholder="请输入更新人" />-->
+<!--        </el-form-item>-->
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
-      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -291,6 +316,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 药品给药途径字典
+      drugRouteOptions: [],
       // 规则类型   口服/注射/外用字典
       routeTypeOptions: [],
       // 查询参数
@@ -310,6 +337,9 @@ export default {
   },
   created() {
     this.getList();
+    this.getDicts("sys_drugRoute_type").then(response => {
+      this.drugRouteOptions = response.data;
+    });
     this.getDicts("sys_route_type").then(response => {
       this.routeTypeOptions = response.data;
     });
@@ -427,15 +457,15 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$confirm('是否确认删除用法用量编号为"' + ids + '"的数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function() {
-        return delRuleusage(ids);
-      }).then(() => {
-        this.getList();
-        this.msgSuccess("删除成功");
-      }).catch(() => {});
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          return delRuleusage(ids);
+        }).then(() => {
+          this.getList();
+          this.msgSuccess("删除成功");
+        }).catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {

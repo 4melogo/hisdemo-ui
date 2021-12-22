@@ -140,6 +140,13 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            @click="useagedEdit(scope.row)"
+            v-hasPermi="['lkai-rud:ruleusage:edit']"
+          >用法用量</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['instruction:instruction:edit']"
           >修改</el-button>
@@ -161,6 +168,116 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+
+    <!--用法用量修改-->
+    <el-dialog :title="title" :visible.sync="openUsage" width="500px" fullscreen="true"  append-to-body>
+      <el-form ref="formUsage" :model="formUsage" :rules="rules" label-width="80px">
+        <el-form-item label="药品名称" prop="drugName">
+          <el-input v-model="formUsage.drugName" placeholder="请输入药品名称" />
+        </el-form-item>
+        <el-form-item label="药品给药途径" prop="drugRoute">
+          <el-select v-model="formUsage.drugRoute" placeholder="请选择药品给药途径">
+            <el-option
+              v-for="dict in drugRouteOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="规则类型" prop="routeType">
+          <el-select v-model="formUsage.routeType" placeholder="请选择规则类型">
+            <el-option
+              v-for="dict in routeTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="说明书记要(循证)" prop="evidence">
+          <el-input v-model="formUsage.evidence" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+
+        <el-form-item label="频次时间周期上限" prop="frequencyTimeMax">
+          <el-input v-model="formUsage.frequencyTimeMax" placeholder="请输入频次时间周期上限" />
+        </el-form-item>
+        <el-form-item label="频次时间周期下限" prop="frequencyTimeMin">
+          <el-input v-model="formUsage.frequencyTimeMin" placeholder="请输入频次时间周期下限" />
+        </el-form-item>
+        <el-form-item label="频次时间单位" prop="frequencyUnit">
+          <el-input v-model="formUsage.frequencyUnit" placeholder="请输入频次时间单位" />
+        </el-form-item>
+        <el-form-item label="最小次数" prop="frequencyMin">
+          <el-input v-model="formUsage.frequencyMin" placeholder="请输入最小次数" />
+        </el-form-item>
+        <el-form-item label="最大次数" prop="frequencyMax">
+          <el-input v-model="formUsage.frequencyMax" placeholder="请输入最大次数" />
+        </el-form-item>
+        <el-form-item label="单次最小剂量" prop="onceMin">
+          <el-input v-model="formUsage.onceMin" placeholder="请输入单次最小剂量" />
+        </el-form-item>
+        <el-form-item label="单次最大剂量" prop="onceMax">
+          <el-input v-model="formUsage.onceMax" placeholder="请输入单次最大剂量" />
+        </el-form-item>
+        <el-form-item label="单次常规单位" prop="onceUnit">
+          <el-input v-model="formUsage.onceUnit" placeholder="请输入单次常规单位" />
+        </el-form-item>
+
+        <el-form-item label="单日最小剂量" prop="dayMin">
+          <el-input v-model="formUsage.dayMin" placeholder="请输入单日最小剂量" />
+        </el-form-item>
+        <el-form-item label="单日最大剂量" prop="dayMax">
+          <el-input v-model="formUsage.dayMax" placeholder="请输入单日最大剂量" />
+        </el-form-item>
+        <el-form-item label="单日剂量单位" prop="dayUnit">
+          <el-input v-model="formUsage.dayUnit" placeholder="请输入单日剂量单位" />
+        </el-form-item>
+        <el-form-item label="单次极量" prop="onceTop">
+          <el-input v-model="formUsage.onceTop" placeholder="请输入单次极量" />
+        </el-form-item>
+        <el-form-item label="单日极量" prop="dayTop">
+          <el-input v-model="formUsage.dayTop" placeholder="请输入单日极量" />
+        </el-form-item>
+        <el-form-item label="单次单日极量单位" prop="topUnit">
+          <el-input v-model="formUsage.topUnit" placeholder="请输入单次单日极量单位" />
+        </el-form-item>
+        <el-form-item label="疗程下限" prop="courseMin">
+          <el-input v-model="formUsage.courseMin" placeholder="请输入疗程下限" />
+        </el-form-item>
+        <el-form-item label="疗程上限" prop="courseMax">
+          <el-input v-model="formUsage.courseMax" placeholder="请输入疗程上限" />
+        </el-form-item>
+        <el-form-item label="疗程单位" prop="courseUnit">
+          <el-input v-model="formUsage.courseUnit" placeholder="请输入疗程单位" />
+        </el-form-item>
+        <el-form-item label="年龄下限" prop="ageMin">
+          <el-input v-model="formUsage.ageMin" placeholder="请输入年龄下限" />
+        </el-form-item>
+        <el-form-item label="年龄上限" prop="ageMax">
+          <el-input v-model="formUsage.ageMax" placeholder="请输入年龄上限" />
+        </el-form-item>
+        <el-form-item label="年龄单位" prop="ageUnit">
+          <el-input v-model="formUsage.ageUnit" placeholder="请输入年龄单位" />
+        </el-form-item>
+        <el-form-item label="年龄类型" prop="ageType">
+          <el-select v-model="formUsage.ageType" placeholder="请选择年龄类型： 儿童、成人、老人">
+            <el-option label="请选择字典生成" value="" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="风险分值" prop="score">
+          <el-input v-model="formUsage.score" placeholder="请输入风险分值" />
+        </el-form-item>
+        <el-form-item label="询证来源" prop="source">
+          <el-input v-model="formUsage.source" placeholder="请输入询证来源" />
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormUsage">确 定</el-button>
+        <el-button @click="cancel1">取 消</el-button>
+      </div>
+    </el-dialog>
 
     <!-- 添加或修改说明书维护对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px"  fullscreen="true" append-to-body>
@@ -295,7 +412,8 @@
 </template>
 
 <script>
-import { listInstruction, getInstruction, delInstruction, addInstruction, updateInstruction } from "@/api/rud/instruction/instruction";
+import { listInstruction,getInstruction, delInstruction, addInstruction, updateInstruction} from "@/api/rud/instruction/instruction";
+import { listRuleusage, getRuleusage, delRuleusage, addRuleusage, updateRuleusage,getRuleusage1 } from "@/api/rud/rule/ruleusage";
 
 export default {
   name: "Instruction",
@@ -319,6 +437,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      openUsage: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -332,6 +451,11 @@ export default {
       },
       // 表单参数
       form: {},
+      formUsage: {},
+      // 药品给药途径字典
+      drugRouteOptions: [],
+      // 规则类型   口服/注射/外用字典
+      routeTypeOptions: [],
       // 表单校验
       rules: {
         componentIds: [
@@ -477,6 +601,12 @@ export default {
   },
   created() {
     this.getList();
+    this.getDicts("sys_drugRoute_type").then(response => {
+      this.drugRouteOptions = response.data;
+    });
+    this.getDicts("sys_route_type").then(response => {
+      this.routeTypeOptions = response.data;
+    });
   },
   methods: {
     /** 查询说明书维护列表 */
@@ -492,6 +622,54 @@ export default {
     cancel() {
       this.open = false;
       this.reset();
+    },
+
+    // 取消按钮
+    cancel1() {
+      this.openUsage = false;
+      this.reset1();
+    },
+
+    reset1() {
+      this.formUsage = {
+        id: null,
+        drugId: null,
+        drugName: null,
+        tymId: null,
+        tym: null,
+        drugRoute: null,
+        routeType: null,
+        evidence: null,
+        frequencyMin: null,
+        frequencyMax: null,
+        frequencyTimeMin: null,
+        frequencyTimeMax: null,
+        frequencyUnit: null,
+        onceMin: null,
+        onceMax: null,
+        onceUnit: null,
+        onceTop: null,
+        dayMin: null,
+        dayMax: null,
+        dayUnit: null,
+        dayTop: null,
+        topUnit: null,
+        courseMin: null,
+        courseMax: null,
+        courseUnit: null,
+        ageMin: null,
+        ageMax: null,
+        ageUnit: null,
+        ageGroup: null,
+        ageType: null,
+        score: null,
+        source: null,
+        caeateTime: null,
+        createUser: null,
+        updateTime: null,
+        updateUser: null
+      };
+      this.resetForm("form");
     },
     // 表单重置
     reset() {
@@ -562,6 +740,18 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
+
+    /** 用法用量按钮操作 */
+    useagedEdit(row) {
+      this.reset1();
+      const id = row.id || this.ids
+      getRuleusage1(id).then(response => {
+        this.formUsage = response.data;
+        this.openUsage = true;
+        this.title = "修改用法用量";
+      });
+    },
+
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -576,6 +766,21 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改说明书维护";
+      });
+    },
+
+    /** 用法用量提交按钮 */
+    submitFormUsage() {
+      this.$refs["formUsage"].validate(valid => {
+        if (valid) {
+          if (this.formUsage.id != null) {
+            updateRuleusage(this.formUsage).then(response => {
+              this.msgSuccess("修改成功");
+              this.openUsage = false;
+              this.getList();
+            });
+          }
+        }
       });
     },
     /** 提交按钮 */
@@ -614,7 +819,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('instruction/instruction/export', {
+      this.download('lkai-rud/instruction/export', {
         ...this.queryParams
       }, `instruction_instruction.xlsx`)
     }
