@@ -151,7 +151,7 @@
                      reserve-keyword
                      :remote-method="getDrugFrequencyList"
                      :loading="loadingSelect"
-                     placeholder="标准给药频次">
+                     placeholder="输入标准给药频次">
             <el-option
               v-for="item in standardFrequency"
               :key="item.id"

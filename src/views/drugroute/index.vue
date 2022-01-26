@@ -149,12 +149,12 @@
                      reserve-keyword
                      :remote-method="getDrugrouteList"
                      :loading="loadingSelect"
-                     placeholder="标准给药途径">
+                     placeholder="输入标准给药途径">
             <el-option
-              v-for="item in stdRoute"
-              :key="item.standardRouteId"
-              :label="item.standardRouteName"
-              :value="item.standardRouteId">
+              v-for="item in stdRouteList"
+              :key="item.id"
+              :label="item.standardRoute"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -203,14 +203,10 @@ export default {
         hospitalRoute: null,
         standardRouteId: null,
         standardRoute:null
-
       },
+      stdRouteList:{},
       // 表单参数
       form: {},
-      stdRoute:[{
-        standardRouteName:'',
-        standardRouteId:'',
-      }],
       // 表单校验
       rules: {
       }
@@ -245,7 +241,8 @@ export default {
         checkcodeId: null,
         hospital: null,
         hospitalRoute: null,
-        standardRouteId: null
+        standardRouteId: null,
+        standardRoute: null
       };
       this.resetForm("form");
     },
@@ -284,7 +281,7 @@ export default {
     /** 查询修改页面的所有标准给药途径，填充下拉选 */
     getDrugrouteList(query){
       getRouteCatelogList(query).then(res=>{
-        this.stdRoute = res.rows
+        this.stdRouteList = res.rows
       });
     },
     /** 提交按钮 */
