@@ -43,6 +43,7 @@ export function delFrequency(id) {
   })
 }
 
+//当点击选择框时候查询频次描述
 export function getFrequencyCatelogList(query) {
   return request({
     url: '/lkai-datamatching/frequency/getFrequencyCatelogList?frequencyName='+query,

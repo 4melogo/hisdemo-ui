@@ -78,7 +78,7 @@
       <el-table-column label="年龄段" align="center" prop="generation" />
       <el-table-column label="年龄段下限" align="center" prop="miniAge" />
       <el-table-column label="年龄段上限" align="center" prop="maxAge" />
-      <el-table-column label="年龄计量单位，例如年" align="center" prop="ageUnit" />
+      <el-table-column label="年龄计量单位" align="center" prop="ageUnit" />
       <el-table-column label="风险等级" align="center" prop="riskScore" />
       <el-table-column label="循证内容" align="center" prop="evidenceContent" />
       <el-table-column label="循证来源" align="center" prop="evidenceSource" />

@@ -139,8 +139,8 @@
         <el-form-item label="医院名称" prop="hospital">
           <el-input v-model="form.hospital" placeholder="请输入医院名称" />
         </el-form-item>
-        <el-form-item label="真实世界医院给药途径" prop="hospitalRoute">
-          <el-input v-model="form.hospitalRoute" placeholder="请输入真实世界医院给药途径" />
+        <el-form-item label="医院给药途径" prop="hospitalRoute">
+          <el-input v-model="form.hospitalRoute" placeholder="请输入医院给药途径" />
         </el-form-item>
         <el-form-item label="标准给药途径" prop="standardRouteId">
           <el-select v-model="form.standardRouteId"
@@ -151,10 +151,10 @@
                      :loading="loadingSelect"
                      placeholder="标准给药途径">
             <el-option
-              v-for="item in standardRoute"
-              :key="item.id"
-              :label="item.standardRoute"
-              :value="item.id">
+              v-for="item in stdRoute"
+              :key="item.standardRouteId"
+              :label="item.standardRouteName"
+              :value="item.standardRouteId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -201,11 +201,13 @@ export default {
         checkcodeId: null,
         hospital: null,
         hospitalRoute: null,
-        standardRouteId: null
+        standardRouteId: null,
+        standardRoute:null
+
       },
       // 表单参数
       form: {},
-      standardRoute:[{
+      stdRoute:[{
         standardRouteName:'',
         standardRouteId:'',
       }],
@@ -282,7 +284,7 @@ export default {
     /** 查询修改页面的所有标准给药途径，填充下拉选 */
     getDrugrouteList(query){
       getRouteCatelogList(query).then(res=>{
-        this.standardRoute = res.rows
+        this.stdRoute = res.rows
       });
     },
     /** 提交按钮 */

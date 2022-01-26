@@ -133,6 +133,14 @@
           <span @click="goDetail(scope.row.id)">{{scope.row.successRate}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="药品对码准确率" align="center" prop="drugAccuracyRate" />
+      <el-table-column label="诊断对码总数" align="center" prop="diagnosisCount" />
+      <el-table-column label="覆盖诊断总数" align="center" prop="diagnosisMatchedCount" />
+      <el-table-column label="诊断对码覆盖率" align="center">
+        <template scope="scope">
+          <span @click="goDiagnosis(scope.row.id)">{{scope.row.diagnosisMatchCoverage}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="对码频次总数" align="center" prop="frequencySum" />
       <el-table-column label="覆盖频次总数" align="center" prop="frequencySuccessSum" />
       <el-table-column label="频次对码覆盖率" align="center">
@@ -444,6 +452,9 @@ export default {
     },
     goFrequency(id){
       this.$router.push({ path: 'frequency',query:{checkcodeId:id}})
+    },
+    goDiagnosis(id){
+      this.$router.push({ path: 'diagnosis',query:{checkcodeId:id}})
     }
   }
 };

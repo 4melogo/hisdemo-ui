@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px">
-      <el-form-item label="对码记录ID" prop="checkcodeId">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="本次对码操作ID" prop="checkcodeId">
         <el-input
           v-model="queryParams.checkcodeId"
-          placeholder="请输入对码记录ID"
+          placeholder="请输入本次对码操作ID"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -19,19 +19,19 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="医药给药频次" prop="hospitalFrequency">
+      <el-form-item label="医院诊断" prop="hosDiagnosis">
         <el-input
-          v-model="queryParams.hospitalFrequency"
-          placeholder="请输入医药给药频次"
+          v-model="queryParams.hosDiagnosis"
+          placeholder="请输入医院诊断"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="标准频次ID" prop="standardFrequencyId">
+      <el-form-item label="标准诊断ID" prop="stdDiagnosisCatalogId">
         <el-input
-          v-model="queryParams.standardFrequencyId"
-          placeholder="请输入标准频次ID"
+          v-model="queryParams.stdDiagnosisCatalogId"
+          placeholder="请输入标准诊断ID"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -51,7 +51,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['frequency:frequency:add']"
+          v-hasPermi="['datamatching:diagnosis:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -62,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['frequency:frequency:edit']"
+          v-hasPermi="['datamatching:diagnosis:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -73,7 +73,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['frequency:frequency:remove']"
+          v-hasPermi="['datamatching:diagnosis:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -83,25 +83,24 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['frequency:frequency:export']"
+          v-hasPermi="['datamatching:diagnosis:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="frequencyList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="diagnosisList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="id" />
-      <el-table-column label="对码记录ID" align="center" prop="checkcodeId" />
+<!--      <el-table-column label="主键ID" align="center" prop="id" />-->
+      <el-table-column label="本次对码操作ID" align="center" prop="checkcodeId" />
       <el-table-column label="医院名称" align="center" prop="hospital" />
-      <el-table-column label="医药给药频次" align="center" prop="hospitalFrequency" />
-      <el-table-column label="标准频率" align="center" prop="frequencyTime" />
-      <el-table-column label="标准频次单位" align="center" prop="frequencyTimeUnit" />
-      <el-table-column label="标准频次数" align="center" prop="standardFrequency" />
-      <el-table-column label="标准频次描述" align="center" prop="frequencyDesc" />
-      <el-table-column label="创建时间" align="center" prop="createTime">
+      <el-table-column label="医院诊断" align="center" prop="hosDiagnosis" />
+      <el-table-column label="标准诊断" align="center" prop="stdDiagnosis" />
+      <el-table-column label="ICD10代码" align="center" prop="icd10Code" />
+      <el-table-column label="标准诊断ID" align="center" prop="stdDiagnosisCatalogId" />
+      <el-table-column label="修改时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -111,14 +110,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['frequency:frequency:edit']"
+            v-hasPermi="['datamatching:diagnosis:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['frequency:frequency:remove']"
+            v-hasPermi="['datamatching:diagnosis:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -132,33 +131,23 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改医院频次标准化对码结果对话框 -->
+    <!-- 添加或修改医院诊断标准化结果对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-<!--        <el-form-item label="对码记录ID" prop="checkcodeId">-->
-<!--          <el-input v-model="form.checkcodeId" placeholder="请输入对码记录ID" />-->
+<!--        <el-form-item label="本次对码操作ID" prop="checkcodeId">-->
+<!--          <el-input v-model="form.checkcodeId" placeholder="请输入本次对码操作ID" />-->
 <!--        </el-form-item>-->
         <el-form-item label="医院名称" prop="hospital">
           <el-input v-model="form.hospital" placeholder="请输入医院名称" />
         </el-form-item>
-        <el-form-item label="医药给药频次" prop="hospitalFrequency">
-          <el-input v-model="form.hospitalFrequency" placeholder="请输入医药给药频次" />
+        <el-form-item label="医院诊断" prop="hosDiagnosis">
+          <el-input v-model="form.hosDiagnosis" placeholder="请输入医院诊断" />
         </el-form-item>
-        <el-form-item label="标准给药频次" prop="frequencyDesc">
-          <el-select v-model="form.frequencyDesc"
-                     filterable
-                     remote
-                     reserve-keyword
-                     :remote-method="getDrugFrequencyList"
-                     :loading="loadingSelect"
-                     placeholder="标准给药频次">
-            <el-option
-              v-for="item in standardFrequency"
-              :key="item.id"
-              :label="item.frequencyDesc"
-              :value="item.frequencyDesc">
-            </el-option>
-          </el-select>
+        <el-form-item label="标准诊断" prop="stdDiagnosis">
+          <el-input v-model="form.stdDiagnosis" placeholder="请输入标准诊断" />
+        </el-form-item>
+        <el-form-item label="ICD10编码" prop="icd10Code">
+          <el-input v-model="form.icd10Code" placeholder="请输入ICD10编码" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -170,10 +159,10 @@
 </template>
 
 <script>
-import { listFrequency, getFrequency, delFrequency, addFrequency, updateFrequency, getFrequencyCatelogList} from "@/api/datamatching/frequency";
+import { listDiagnosis, getDiagnosis, delDiagnosis, addDiagnosis, updateDiagnosis } from "@/api/datamatching/diagnosis";
 
 export default {
-  name: "Frequency",
+  name: "Diagnosis",
   data() {
     return {
       // 遮罩层
@@ -188,28 +177,37 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 医院频次标准化对码结果表格数据
-      frequencyList: [],
+      // 医院诊断标准化结果表格数据
+      diagnosisList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      loadingSelect:false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         checkcodeId: null,
         hospital: null,
-        hospitalFrequency: null,
-        standardFrequencyId: null,
-        frequencyDesc: null
+        hosDiagnosis: null,
+        stdDiagnosis: null,
+        icd10Code: null,
+        stdDiagnosisCatalogId: null,
+
       },
-      standardFrequency:{},
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        checkcodeId: [
+          { required: true, message: "本次对码操作ID不能为空", trigger: "blur" }
+        ],
+        hospital: [
+          { required: true, message: "医院名称不能为空", trigger: "blur" }
+        ],
+        hosDiagnosis: [
+          { required: true, message: "医院诊断不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -217,15 +215,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询医院频次标准化对码结果列表 */
+    /** 查询医院诊断标准化结果列表 */
     getList() {
       this.loading = true;
-      console.log(this.$route.query.checkcodeId)
-      if(this.$route.query.checkcodeId != undefined){
-        this.queryParams.checkcodeId = this.$route.query.checkcodeId
-      }
-      listFrequency(this.queryParams).then(response => {
-        this.frequencyList = response.rows;
+      listDiagnosis(this.queryParams).then(response => {
+        this.diagnosisList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -241,9 +235,9 @@ export default {
         id: null,
         checkcodeId: null,
         hospital: null,
-        hospitalFrequency: null,
-        standardFrequencyId: null,
-        frequencyDesc: null
+        hosDiagnosis: null,
+        stdDiagnosisCatalogId: null,
+        createTime: null
       };
       this.resetForm("form");
     },
@@ -267,36 +261,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加医院频次标准化对码结果";
+      this.title = "添加医院诊断标准化结果";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getFrequency(id).then(response => {
+      getDiagnosis(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改频次对码结果";
+        this.title = "修改医院诊断标准化结果";
       });
-    },
-    getDrugFrequencyList(query){
-      getFrequencyCatelogList(query)
-      .then(res=>{
-        this.standardFrequency = res.rows;
-      })
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateFrequency(this.form).then(response => {
+            updateDiagnosis(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addFrequency(this.form).then(response => {
+            addDiagnosis(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -308,12 +296,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除医院频次标准化对码结果编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除医院诊断标准化结果编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delFrequency(ids);
+          return delDiagnosis(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -321,9 +309,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('frequency/frequency/export', {
+      this.download('datamatching/diagnosis/export', {
         ...this.queryParams
-      }, `frequency_frequency.xlsx`)
+      }, `datamatching_diagnosis.xlsx`)
     }
   }
 };
