@@ -139,8 +139,8 @@
         <el-form-item label="医院名称" prop="hospital">
           <el-input v-model="form.hospital" placeholder="请输入医院名称" />
         </el-form-item>
-        <el-form-item label="真实世界医院给药途径" prop="hospitalRoute">
-          <el-input v-model="form.hospitalRoute" placeholder="请输入真实世界医院给药途径" />
+        <el-form-item label="医院给药途径" prop="hospitalRoute">
+          <el-input v-model="form.hospitalRoute" placeholder="请输入医院给药途径" />
         </el-form-item>
         <el-form-item label="标准给药途径" prop="standardRouteId">
           <el-select v-model="form.standardRouteId"
@@ -149,9 +149,9 @@
                      reserve-keyword
                      :remote-method="getDrugrouteList"
                      :loading="loadingSelect"
-                     placeholder="标准给药途径">
+                     placeholder="输入标准给药途径">
             <el-option
-              v-for="item in standardRoute"
+              v-for="item in stdRouteList"
               :key="item.id"
               :label="item.standardRoute"
               :value="item.id">
@@ -201,14 +201,12 @@ export default {
         checkcodeId: null,
         hospital: null,
         hospitalRoute: null,
-        standardRouteId: null
+        standardRouteId: null,
+        standardRoute:null
       },
+      stdRouteList:{},
       // 表单参数
       form: {},
-      standardRoute:[{
-        standardRouteName:'',
-        standardRouteId:'',
-      }],
       // 表单校验
       rules: {
       }
@@ -243,7 +241,8 @@ export default {
         checkcodeId: null,
         hospital: null,
         hospitalRoute: null,
-        standardRouteId: null
+        standardRouteId: null,
+        standardRoute: null
       };
       this.resetForm("form");
     },
@@ -282,7 +281,7 @@ export default {
     /** 查询修改页面的所有标准给药途径，填充下拉选 */
     getDrugrouteList(query){
       getRouteCatelogList(query).then(res=>{
-        this.standardRoute = res.rows
+        this.stdRouteList = res.rows
       });
     },
     /** 提交按钮 */

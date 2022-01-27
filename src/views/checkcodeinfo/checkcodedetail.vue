@@ -183,18 +183,19 @@
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="主键ID" align="center" prop="id" />-->
 <!--      <el-table-column label="药品目录ID" align="center" prop="drugId" />-->
-<!--      <el-table-column label="关联说明书ID" align="center" prop="insId" />-->
+      <el-table-column label="关联说明书ID" align="center" prop="insId" />
 <!--      <el-table-column label="成分ID" align="center" prop="componentId" />-->
-      <el-table-column label="医院药品编码" align="center" prop="hospitalDrugCode" />
       <el-table-column label="医院" align="center" prop="hospital" />
+      <el-table-column label="医院药品编码" align="center" prop="hospitalDrugCode" />
       <el-table-column label="医院药品名称" align="center" prop="hospitalDrugName" />
       <el-table-column label="医院药品批准文号" align="center" prop="hospitalDrugPzwh" />
       <el-table-column label="医院药品厂家" align="center" prop="hospitalDrugCj" />
       <el-table-column label="医院药品规格" align="center" prop="hospitalDrugGg" />
       <el-table-column label="通用药品名称" align="center" prop="ypmc" />
-      <el-table-column label="通用药品规格" align="center" prop="pzwh" />
+      <el-table-column label="通用药品批准文号" align="center" prop="pzwh" />
       <el-table-column label="通用药品厂家" align="center" prop="cj" />
       <el-table-column label="通用药品规格" align="center" prop="gg" />
+      <el-table-column label="对码评分" align="center" prop="score" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
