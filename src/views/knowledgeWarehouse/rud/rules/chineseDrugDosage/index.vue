@@ -306,7 +306,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('knowledgeWarehouse/dosage/export', {
+      this.download('lkai-rud/dosage/export', {
         ...this.queryParams
       }, `knowledgeWarehouse_dosage.xlsx`)
     }
