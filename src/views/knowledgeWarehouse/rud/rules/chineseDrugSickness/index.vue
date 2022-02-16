@@ -322,7 +322,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('knowledgeWarehouse/chineseDrugSickness/export', {
+      this.download('lkai-rud/chineseDrugSickness/export', {
         ...this.queryParams
       }, `knowledgeWarehouse_chineseDrugSickness.xlsx`)
     }

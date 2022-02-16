@@ -331,7 +331,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('knowledgeWarehouse/chineseDrugAge/export', {
+      this.download('lkai-rud/chineseDrugAge/export', {
         ...this.queryParams
       }, `knowledgeWarehouse_chineseDrugAge.xlsx`)
     }

@@ -10,14 +10,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="上传时间" prop="uploadTime">-->
-<!--        <el-date-picker clearable size="small"-->
-<!--          v-model="queryParams.uploadTime"-->
-<!--          type="date"-->
-<!--          value-format="yyyy-MM-dd"-->
-<!--          placeholder="选择上传时间">-->
-<!--        </el-date-picker>-->
-<!--      </el-form-item>-->
+      <!--      <el-form-item label="上传时间" prop="uploadTime">-->
+      <!--        <el-date-picker clearable size="small"-->
+      <!--          v-model="queryParams.uploadTime"-->
+      <!--          type="date"-->
+      <!--          value-format="yyyy-MM-dd"-->
+      <!--          placeholder="选择上传时间">-->
+      <!--        </el-date-picker>-->
+      <!--      </el-form-item>-->
       <el-form-item label="医院等级" prop="hospitalLevel">
         <el-input
           v-model="queryParams.hospitalLevel"
@@ -36,33 +36,33 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="对码药品总数" prop="drugSum">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.drugSum"-->
-<!--          placeholder="请输入对码药品总数"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="错误药品总数" prop="successSum">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.successSum"-->
-<!--          placeholder="请输入错误药品总数"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="对码成功率" prop="successRate">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.successRate"-->
-<!--          placeholder="请输入对码成功率"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
+      <!--      <el-form-item label="对码药品总数" prop="drugSum">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.drugSum"-->
+      <!--          placeholder="请输入对码药品总数"-->
+      <!--          clearable-->
+      <!--          size="small"-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="错误药品总数" prop="successSum">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.successSum"-->
+      <!--          placeholder="请输入错误药品总数"-->
+      <!--          clearable-->
+      <!--          size="small"-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="对码成功率" prop="successRate">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.successRate"-->
+      <!--          placeholder="请输入对码成功率"-->
+      <!--          clearable-->
+      <!--          size="small"-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -78,19 +78,9 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['drug:info:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
-      <!--<el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['drug:info:edit']"
-        >修改</el-button>
-      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -100,7 +90,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['drug:info:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -110,69 +101,88 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['drug:info:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="对码记录ID" align="center" prop="id" />
-      <el-table-column label="上传者" align="center" prop="uploader" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="对码记录ID" align="center" prop="id"/>
+      <el-table-column label="上传者" align="center" prop="uploader"/>
       <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="医院等级" align="center" prop="hospitalLevel" />
-      <el-table-column label="医院名称" align="center" prop="hospitalname" />
-      <el-table-column label="对码药品总数" align="center" prop="drugSum" />
-      <el-table-column label="覆盖药品总数" align="center" prop="successSum" />
+      <el-table-column label="医院等级" align="center" prop="hospitalLevel"/>
+      <el-table-column label="医院名称" align="center" prop="hospitalname"/>
+      <el-table-column label="对码药品总数" align="center" prop="drugSum"/>
+      <el-table-column label="覆盖药品总数" align="center" prop="successSum"/>
       <el-table-column label="药品对码覆盖率" align="center">
         <template scope="scope">
-          <span @click="goDetail(scope.row.id)">{{scope.row.successRate}}</span>
+          <span @click="goDetail(scope.row.id)">{{ scope.row.successRate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="药品对码准确率" align="center" prop="drugAccuracyRate" />
-      <el-table-column label="诊断对码总数" align="center" prop="diagnosisCount" />
-      <el-table-column label="覆盖诊断总数" align="center" prop="diagnosisMatchedCount" />
+      <el-table-column label="药品对码准确率" align="center" prop="drugAccuracyRate"/>
+      <el-table-column label="诊断对码总数" align="center" prop="diagnosisCount"/>
+      <el-table-column label="覆盖诊断总数" align="center" prop="diagnosisMatchedCount"/>
       <el-table-column label="诊断对码覆盖率" align="center">
         <template scope="scope">
-          <span @click="goDiagnosis(scope.row.id)">{{scope.row.diagnosisMatchCoverage}}</span>
+          <span @click="goDiagnosis(scope.row.id)">{{ scope.row.diagnosisMatchCoverage }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="对码频次总数" align="center" prop="frequencySum" />
-      <el-table-column label="覆盖频次总数" align="center" prop="frequencySuccessSum" />
+      <el-table-column label="对码频次总数" align="center" prop="frequencySum"/>
+      <el-table-column label="覆盖频次总数" align="center" prop="frequencySuccessSum"/>
       <el-table-column label="频次对码覆盖率" align="center">
         <template scope="scope">
-          <span @click="goFrequency(scope.row.id)">{{scope.row.frequencyRate}}</span>
+          <span @click="goFrequency(scope.row.id)">{{ scope.row.frequencyRate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="对码途径总数" align="center" prop="routeSum" />
-      <el-table-column label="覆盖途径总数" align="center" prop="routeSuccessSum" />
+      <el-table-column label="对码途径总数" align="center" prop="routeSum"/>
+      <el-table-column label="覆盖途径总数" align="center" prop="routeSuccessSum"/>
       <el-table-column label="途径对码覆盖率" align="center">
         <template scope="scope">
-          <span @click="goRoute(scope.row.id)">{{scope.row.routeRate}}</span>
+          <span @click="goRoute(scope.row.id)">{{ scope.row.routeRate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="140" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['drug:info:edit']"
-          >下载</el-button>
+            icon="el-icon-download"
+            @click="downloadNew(scope.row)"
+            v-hasPermi="['drug:info:export']">下载新服务数据
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-download"
+            @click="downloadOld(scope.row)"
+            v-hasPermi="['drug:info:export']">
+            下载旧服务数据
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-download"
+            @click="downloadTestCase(scope.row)"
+            v-hasPermi="['drug:info:export']">
+            下载测试用例
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['drug:info:remove']"
-          >删除</el-button>
+            v-hasPermi="['drug:info:remove']">
+            删除
+          </el-button>
         </template>
       </el-table-column>
+
     </el-table>
 
     <pagination
@@ -186,20 +196,20 @@
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-<!--        <el-form-item label="对码成功率" prop="id">-->
-<!--          <el-input v-model="form.id" placeholder="请输入对码成功率" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="上传者" prop="uploader">-->
-<!--          <el-input v-model="form.uploader" placeholder="请输入上传者" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="上传时间" prop="uploadTime">-->
-<!--          <el-date-picker clearable size="small"-->
-<!--            v-model="form.uploadTime"-->
-<!--            type="date"-->
-<!--            value-format="yyyy-MM-dd"-->
-<!--            placeholder="选择上传时间">-->
-<!--          </el-date-picker>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="对码成功率" prop="id">-->
+        <!--          <el-input v-model="form.id" placeholder="请输入对码成功率" />-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="上传者" prop="uploader">-->
+        <!--          <el-input v-model="form.uploader" placeholder="请输入上传者" />-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="上传时间" prop="uploadTime">-->
+        <!--          <el-date-picker clearable size="small"-->
+        <!--            v-model="form.uploadTime"-->
+        <!--            type="date"-->
+        <!--            value-format="yyyy-MM-dd"-->
+        <!--            placeholder="选择上传时间">-->
+        <!--          </el-date-picker>-->
+        <!--        </el-form-item>-->
 
         <el-form-item label="医院等级" prop="hospitalLevel">
           <el-select v-model="form.hospitalLevel" placeholder="请输入医院等级">
@@ -212,17 +222,17 @@
           </el-select>
         </el-form-item>
         <el-form-item label="医院名称" prop="hospitalname">
-          <el-input v-model="form.hospitalname" placeholder="请输入医院名称" />
+          <el-input v-model="form.hospitalname" placeholder="请输入医院名称"/>
         </el-form-item>
-<!--        <el-form-item label="对码药品总数" prop="drugSum">-->
-<!--          <el-input v-model="form.drugSum" placeholder="请输入对码药品总数" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="错误药品总数" prop="successSum">-->
-<!--          <el-input v-model="form.successSum" placeholder="请输入错误药品总数" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="对码成功率" prop="successRate">-->
-<!--          <el-input v-model="form.successRate" placeholder="请输入对码成功率" />-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="对码药品总数" prop="drugSum">-->
+        <!--          <el-input v-model="form.drugSum" placeholder="请输入对码药品总数" />-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="错误药品总数" prop="successSum">-->
+        <!--          <el-input v-model="form.successSum" placeholder="请输入错误药品总数" />-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="对码成功率" prop="successRate">-->
+        <!--          <el-input v-model="form.successRate" placeholder="请输入对码成功率" />-->
+        <!--        </el-form-item>-->
         <el-form-item label="文件上传" prop="fileList">
           <el-upload
             class="upload-demo"
@@ -240,7 +250,7 @@
             :on-exceed="handleExceed"
             :file-list="form.fileList">
             <el-button size="small" type="primary">点击上传</el-button>
-<!--            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
+            <!--            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
           </el-upload>
         </el-form-item>
       </el-form>
@@ -254,9 +264,10 @@
 
 <script>
 
-import { listInfo, getInfo, delInfo, addInfo, updateInfo, fileUpload,download } from "@/api/drug/info";
+import {listInfo, getInfo, delInfo, addInfo, updateInfo, fileUpload, download} from "@/api/drug/info";
 import {formatDate} from "../../utils";
-import { downLoadZip } from "@/utils/zipdownload";
+import {downLoadZip} from "@/utils/zipdownload";
+
 export default {
   name: "Info",
   data() {
@@ -295,25 +306,24 @@ export default {
         successRate: null
       },
       //上传的表单的参数
-      formData:{
+      formData: {
         hospitalLevel: '',
         hospitalname: '',
       },
-      hospitalLevels:[
-      {
-        lable:"二级医院",
-        value:"二级医院"
-      },{
-        lable:"三级医院",
-        value:"三级医院"
-      }],
+      hospitalLevels: [
+        {
+          lable: "二级医院",
+          value: "二级医院"
+        }, {
+          lable: "三级医院",
+          value: "三级医院"
+        }],
       // 表单参数
       form: {
         fileList: []
       },
       // 表单校验
-      rules: {
-      },
+      rules: {},
     };
   },
   created() {
@@ -360,7 +370,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -370,9 +380,21 @@ export default {
       this.title = "文件上传";
     },
     /** 下载按钮操作 */
-    handleUpdate(row) {
+    downloadNew(row) {
       const id = row.id
-      downLoadZip("lkai-datamatching/info/download?fileId="+id, "data.zip");
+      downLoadZip("/lkai-datamatching/info/download?fileId=" + id, "dataNewSql.zip");
+      // console.log(id)
+      // window.location.href = '/lkai-datamatching/info/download?fileId='+id;
+    },
+    downloadOld(row) {
+      const id = row.id
+      downLoadZip("/lkai-datamatching/info/downloadOld?fileId=" + id, "dataOldSql.zip");
+      // console.log(id)
+      // window.location.href = '/lkai-datamatching/info/download?fileId='+id;
+    },
+    downloadTestCase(row) {
+      const id = row.id
+      downLoadZip("/lkai-datamatching/info/downloadTestCase?fileId=" + id, "dataTestCase.zip");
       // console.log(id)
       // window.location.href = '/lkai-datamatching/info/download?fileId='+id;
     },
@@ -402,19 +424,20 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$confirm('是否确认删除编号为"' + ids + '"的数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return delInfo(ids);
-        }).then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        }).catch(() => {});
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function () {
+        return delInfo(ids);
+      }).then(() => {
+        this.getList();
+        this.msgSuccess("删除成功");
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('drug/info/export', {
+      this.download('datamatching/info/export', {
         ...this.queryParams
       }, `drug_info.xlsx`)
     },
@@ -428,33 +451,33 @@ export default {
       this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
     beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${ file.name }？`);
+      return this.$confirm(`确定移除 ${file.name}？`);
     },
-    uploadFile(param){
+    uploadFile(param) {
       this.open = false;
       this.loading = true;
       var formData = new FormData();
-      formData.append("file",param.file);
-      formData.append("checkcodeInfo",JSON.stringify(param.data))
-      fileUpload(formData).then(res=>{
-          this.msgSuccess("新增成功");
-          this.getList();
+      formData.append("file", param.file);
+      formData.append("checkcodeInfo", JSON.stringify(param.data))
+      fileUpload(formData).then(res => {
+        this.msgSuccess("上传成功，正在对码,请稍后查看结果...");
+        this.getList();
         this.loading = false;
       })
     },
-    goDetail(id){
-      this.$router.push({ path: 'checkcodedetail',query:{checkcodeId:id}})
+    goDetail(id) {
+      this.$router.push({path: 'checkcodedetail', query: {checkcodeId: id}})
       //this.$router.push({ path: 'drugroute',query:{checkcodeId:checkcodeId}})
       //this.$router.push({ path: 'frequency',query:{checkcodeId:checkcodeId}})
     },
-    goRoute(id){
-      this.$router.push({ path: 'drugroute',query:{checkcodeId:id}})
+    goRoute(id) {
+      this.$router.push({path: 'drugroute', query: {checkcodeId: id}})
     },
-    goFrequency(id){
-      this.$router.push({ path: 'frequency',query:{checkcodeId:id}})
+    goFrequency(id) {
+      this.$router.push({path: 'frequency', query: {checkcodeId: id}})
     },
-    goDiagnosis(id){
-      this.$router.push({ path: 'diagnosis',query:{checkcodeId:id}})
+    goDiagnosis(id) {
+      this.$router.push({path: 'diagnosis', query: {checkcodeId: id}})
     }
   }
 };

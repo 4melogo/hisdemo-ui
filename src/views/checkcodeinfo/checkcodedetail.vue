@@ -511,7 +511,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('domain/datamatching/export', {
+      this.download('datamatching/checkcodeDetail/export', {
         ...this.queryParams
       }, `domain_datamatching.xlsx`)
     }

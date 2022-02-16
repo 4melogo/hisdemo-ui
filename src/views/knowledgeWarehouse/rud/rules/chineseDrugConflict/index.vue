@@ -300,7 +300,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('knowledgeWarehouse/drugConflict/export', {
+      this.download('lkai-rud/drugConflict/export', {
         ...this.queryParams
       }, `knowledgeWarehouse_drugConflict.xlsx`)
     }

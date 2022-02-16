@@ -369,7 +369,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('knowledgeWarehouse/chineseDrugUsage/export', {
+      this.download('lkai-rud/chineseDrugUsage/export', {
         ...this.queryParams
       }, `knowledgeWarehouse_chineseDrugUsage.xlsx`)
     }
