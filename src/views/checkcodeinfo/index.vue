@@ -147,42 +147,42 @@
           <span @click="goRoute(scope.row.id)">{{ scope.row.routeRate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="140" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-download"
             @click="downloadNew(scope.row)"
-            v-hasPermi="['drug:info:export']"
-          >下载新服务数据
+            v-hasPermi="['drug:info:export']">下载新服务数据
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-download"
             @click="downloadOld(scope.row)"
-            v-hasPermi="['drug:info:export']"
-          >下载旧服务数据
+            v-hasPermi="['drug:info:export']">
+            下载旧服务数据
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-download"
             @click="downloadTestCase(scope.row)"
-            v-hasPermi="['drug:info:export']"
-          >下载测试用例
+            v-hasPermi="['drug:info:export']">
+            下载测试用例
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['drug:info:remove']"
-          >删除
+            v-hasPermi="['drug:info:remove']">
+            删除
           </el-button>
         </template>
       </el-table-column>
+
     </el-table>
 
     <pagination
@@ -382,19 +382,19 @@ export default {
     /** 下载按钮操作 */
     downloadNew(row) {
       const id = row.id
-      downLoadZip("lkai-datamatching/info/download?fileId=" + id, "data.zip");
+      downLoadZip("/lkai-datamatching/info/download?fileId=" + id, "dataNewSql.zip");
       // console.log(id)
       // window.location.href = '/lkai-datamatching/info/download?fileId='+id;
     },
     downloadOld(row) {
       const id = row.id
-      downLoadZip("lkai-datamatching/info/downloadOld?fileId=" + id, "data.zip");
+      downLoadZip("/lkai-datamatching/info/downloadOld?fileId=" + id, "dataOldSql.zip");
       // console.log(id)
       // window.location.href = '/lkai-datamatching/info/download?fileId='+id;
     },
     downloadTestCase(row) {
       const id = row.id
-      downLoadZip("lkai-datamatching/info/downloadTestCase?fileId=" + id, "data.zip");
+      downLoadZip("/lkai-datamatching/info/downloadTestCase?fileId=" + id, "dataTestCase.zip");
       // console.log(id)
       // window.location.href = '/lkai-datamatching/info/download?fileId='+id;
     },
@@ -460,7 +460,7 @@ export default {
       formData.append("file", param.file);
       formData.append("checkcodeInfo", JSON.stringify(param.data))
       fileUpload(formData).then(res => {
-        this.msgSuccess("新增成功");
+        this.msgSuccess("上传成功，正在对码,请稍后查看结果...");
         this.getList();
         this.loading = false;
       })
